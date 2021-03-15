@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <body>
+        <script>
+            function heidiDecode(hex) {
+                let str = ''
+                const shift = parseInt(hex.substr(-1))
+                hex = hex.substr(0, hex.length - 1)
+                for (let i = 0; i < hex.length; i += 2) { 
+                    str += String.fromCharCode(
+                        parseInt(hex.substr(i, 2), 16) - shift
+                    )
+                }
+                return str
+            }
+            document.write(
+                heidiDecode('3738393A3B3C6')
+            )
+        </script>
+    </body>
+</html>
