@@ -7,7 +7,7 @@ function main(){
     //route action
     if (@$_REQUEST["action"] == "route") { return route("Metas Laminação a Frio"); };
     //update action
-    if (@$_REQUEST["action"] == "update") { return update(15); };
+    if (@$_REQUEST["action"] == "update") { return update(300); };
     //if no action was found
     return array("error" => "action not found");
 };
