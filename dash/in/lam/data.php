@@ -2,7 +2,7 @@
 
 function _parse_data() {
 
-    $metas = get_json("http://192.168.17.61:3000/api/metas_lam_quente");
+    $metas = get_json("http://127.0.0.1:3000/api/metas_lam_quente");
 
     if(count($metas) == 0){ return -1; };
 
@@ -47,13 +47,13 @@ function _parse_data() {
     $metas["SUCATEAMENTO"]["mes1"] = 2.6;
     $metas["SUCATEAMENTO"]["mes2"] = 4.7;
 
-    $meta_trim_prod = 30600;
+    $meta_trim_prod = 31740;
     $trim_metas = array(
         0,
         $meta_trim_prod,
-        95.2,
-        130,
-        5,
+        95.3,
+        220,
+        3,
         2100000,
     );
 
@@ -128,9 +128,9 @@ function _parse_data() {
     if($prod_data == null || $dat_file == null || timestamp($timestamp) >= timestamp($dat_file) + 3600){
         $dat = $timestamp;
         put_json("dat.json",$dat);
-        $prod = get_json("http://192.168.17.61:3000/api/prod_lam_quente");
+        $prod = get_json("http://127.0.0.1:3000/api/prod_lam_quente");
         $prod_data = array();
-        for($i = 0; $i < count($prod); $i++){
+        for ($i = 0; $i < count($prod); $i++) {
             $dia = explode("/", $prod[$i]["data"])[0];
             for($g = 0; $g < 31; $g++){
                 if((count($prod_data) + 1) < $dia){
@@ -145,7 +145,7 @@ function _parse_data() {
             };
             $e = count($prod_data);
             $prod_data[$e][0] = $dia;
-            $prod_data[$e][1] = round($prod[$i]["peso"] / 1000);
+            $prod_data[$e][1] = round($prod[$i]["peso"]);
         };
     };
     $last_day = $prod_data[count($prod_data) - 1][0];

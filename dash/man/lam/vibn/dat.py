@@ -12,8 +12,8 @@ def parse_data():
         rows = [["Data", "Vibração", "Rotação", "Velocidade", "Bitola"]]
         for a in range(len(items[info])):
             rows.append([items[info][a][0],
-                "{} mm/s".format(round(items[info][a][1], 2)),
-                "{} RPM".format(round(items[info][a][2], 2)),
+                "{} mm/s".format(round(items[info][a][2], 2)),
+                "{} RPM".format(round(items[info][a][1], 2)),
                 "{} m/s".format(round(items[info][a][5], 1)),
                 "{} mm".format(round(items[info][a][3], 1))
             ])

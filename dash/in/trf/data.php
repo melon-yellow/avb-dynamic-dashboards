@@ -2,7 +2,7 @@
 
 function _parse_data() {
 
-    $js = get_json("http://192.168.17.61:3000/api/trf");
+    $js = get_json("http://127.0.0.1:3000/api/trf");
 
     if(count($js) == 0){ return -1; };
 

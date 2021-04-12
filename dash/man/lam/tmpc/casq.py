@@ -11,8 +11,14 @@ def casq():
 
     bitolas = dict(fm=list(), rb=list())
 
-    #Fix null data
+    # Fix null data
+    if not isinstance(params, dict): params = dict()
+    if 'data' not in params: params['data'] = None
+    if 'bitola' not in params: params['bitola'] = None
+    # Set default 'data'
     if params["data"] == None: params["data"] = 12
+    # dump json
+    json.dump(params, open('filter.json', 'w'))
 
     def separate(info):
         df = pd.DataFrame(obj)

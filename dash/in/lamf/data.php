@@ -2,7 +2,7 @@
 
 function _parse_data() {
 
-    $metas = get_json("http://192.168.17.61:3000/api/metas_lam_frio/");
+    $metas = get_json("http://127.0.0.1:3000/api/metas_lam_frio/");
 
     if(count($metas) == 0){ return -1; };
 
@@ -106,9 +106,9 @@ function _parse_data() {
     if($prod_data == null || $dat_file == null || timestamp($timestamp) >= timestamp($dat_file) + 3600){
         $dat = array("dat" => $timestamp);
         put_json("dat.json",$dat);
-        $prod = get_json("http://192.168.17.61:3000/api/prod_lam_frio");
+        $prod = get_json("http://127.0.0.1:3000/api/prod_lam_frio");
         $prod_data = array();
-        for($i = 0; $i < count($prod); $i++){
+        for ($i = 0; $i < count($prod); $i++) {
             $item = $prod[$i];
             $dia = explode("/", $item["data"])[0];
             for($g = 0; $g < 31; $g++){
@@ -124,7 +124,7 @@ function _parse_data() {
             };
             $e = count($prod_data);
             $prod_data[$e][0] = $dia;
-            $prod_data[$e][1] = round($item["peso"] / 1000);
+            $prod_data[$e][1] = round($item["peso"]);
         };
     };
     $last_day = $prod_data[count($prod_data) - 1][0];
@@ -157,7 +157,7 @@ function _parse_data() {
     $prod_acc = 0;
     for($r = 0; $r < count($prod_data); $r++){
         $day_acc = $prod_data[$r][0];
-        //$rem_prod = ($meta_trim_prod - $prod_acc); JAYRON
+        //$rem_prod = ($meta_trim_prod - $prod_acc); //JAYRON
         $rem_prod = ($meta_trim_prod);
         if($rem_prod < 0){ $rem_prod = 0; };
         $rem_days = ($month_all_days - $day_acc + 0);
