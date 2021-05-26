@@ -439,7 +439,7 @@ export async function linebarchart(thiscd, thisElement, thiscn) {
             color: "rgba(0, 0, 0, .125)"
         },
         stacked: true,
-    };
+    }; 
     let yAxes = {
         ticks: window.page.cards[thiscd].layout.elements[thisElement].addons.ticks.y,
         gridLines: {

@@ -13,6 +13,7 @@ function _parse_data() {
     $this_trim = 3*(floor(($month-1)/3)+1);
     $count = ($month-$this_trim+3);
     $this_trim = array($this_trim-2,$this_trim-1,$this_trim);
+    
     //get month days
     function month_days($month, $year){
         return cal_days_in_month(CAL_GREGORIAN, $month, $year);
@@ -41,13 +42,20 @@ function _parse_data() {
             $meses[$this_trim[2]-1]
         )
     );
-    $meta_trim_prod = 3500;
+    $meta_trim_prod = 3700;
     $indicadores = array(
-        "PRODUÇÃO" => array("name" => "Produção Laminação a Frio", "trim" => $meta_trim_prod)
-        #"RENDIMENTO METÁLICO" => array("name" => "Rendimento Metálico", "trim" => 99)
+        "PRODUÇÃO" => array("name" => "Produção Laminação a Frio", "trim" => $meta_trim_prod),
+        "utilizacao" => array("name" => "Utilização %", "trim" => 60),
+        "sucateamento" => array("name" => "Sucateamento", "trim" => 3),
+        "custo" => array("name" => "Custo R$/Ton", "trim" => 100),
+        "5S" => array("name" => "5S", "trim" => 90)
     );
 
     $today_prod = 0;
+    $mes1_prod = 0;
+    $mes2_prod = 0;
+    $mes3_prod = 0;
+    
 
     //foreach meta key
     $keys = array_keys($indicadores);
@@ -55,7 +63,11 @@ function _parse_data() {
         $item = $metas[$keys[$i]];
         $ind = $indicadores[$keys[$i]]["name"];
         if($ind == "Produção Laminação a Frio"){
+            #$item['dia'] = $item['dia']*10; // ajuste mudança homerico 30/04/21
             $today_prod = $item["dia"];
+            $mes1_prod = $item["mes1"];
+            $mes2_prod = $item["mes2"];
+            $mes3_prod = $item["mes3"];
         };
         $ritmo_dia = $item["dia"];
         $acc_trim = ($item["mes1"] + $item["mes2"] + $item["mes3"]);
@@ -64,12 +76,60 @@ function _parse_data() {
         //condition to do calculations
         if ($ind == "Produção Laminação a Frio") {
             $raz = (4 - $count);
-            $meta_trim_prod = ((($meta_trim_prod * 3) - $acc_trim) / $raz);
+            //$meta_trim_prod = ((($meta_trim_prod * 3) - $acc_trim) / $raz);
+			$meta_trim_prod = ((($meta_trim_prod)));
             $ritmo_dia = (($item["dia"] / $sec) * 86400);
             $ritmo_trim = (($ritmo_trim * $count) / ((($trim_days - 1) * 86400) + $sec));
             $ritmo_trim *= (($trim_all_days * 86400) / 3);
             $ritmo_trim = round($ritmo_trim, 0);
+
         };
+        if($ind == "Utilização %"){
+            $item["dia"] = round($item["dia"],1);
+            $item["mes1"] = round($item["mes1"],1);
+            $item["mes2"] = round($item["mes2"],1);
+            $item["mes3"] = round($item["mes3"],1);
+            
+
+        }
+        if($ind == "Custo R$/Ton"){
+            $item["dia"] = round(($item["dia"]/$today_prod),1);
+            $item["mes1"] = round($item["mes1"]/$mes1_prod,1);
+            $item["mes2"] = round($item["mes2"]/$mes2_prod,1);
+            $item["mes3"] = round($item["mes3"]/$mes3_prod,1);
+            $item["trim"] = 100.0;
+            $ritmo_dia = (($item["dia"] / $sec) * 86400);
+            $acc_prod_custo = $mes1_prod + $mes2_prod + $mes3_prod  ;
+            $ritmo_trim = ($ritmo_trim/$acc_prod_custo);
+            $ritmo_trim = (($ritmo_trim * $count) / ((($trim_days - 1) * 86400) + $sec));
+            $ritmo_trim *= (($trim_all_days * 86400) / 3);
+            $ritmo_trim = round($ritmo_trim, 0);
+            $media_trim =  ($item["acumulado"]/$acc_prod_custo)/3;
+
+            
+
+        }
+        if($ind == "Sucateamento"){
+            $item["mes1"] = round($item["mes1"]/$mes1_prod,1);
+            $item["mes2"] = round($item["mes2"]/$mes2_prod,1);
+            $item["mes3"] = round($item["mes3"]/$mes3_prod,1);
+            $ritmo_dia = (($item["dia"] / $sec) * 86400);
+            $acc_prod_custo = $mes1_prod + $mes2_prod + $mes3_prod  ;
+            $ritmo_trim = ($ritmo_trim/$acc_prod_custo);
+            $ritmo_trim = (($ritmo_trim * $count) / ((($trim_days - 1) * 86400) + $sec));
+            $ritmo_trim *= (($trim_all_days * 86400) / 3);
+            $ritmo_trim = round($ritmo_trim, 2);
+            $media_trim =  ($item["acumulado"]/$acc_prod_custo)/3;
+
+        }
+        if($ind == "5S"){
+
+            $ritmo_trim = (($ritmo_trim * $count) / ((($trim_days - 1) * 86400) + $sec));
+            $ritmo_trim *= (($trim_all_days * 86400) / 3);
+            $ritmo_trim = round($ritmo_trim, 2);
+            $media_trim =  $item["acumulado"]/3;
+
+        }
         //assign values to datatable
         $datatable_metas = array_merge(
             $datatable_metas,
@@ -157,8 +217,7 @@ function _parse_data() {
     $prod_acc = 0;
     for($r = 0; $r < count($prod_data); $r++){
         $day_acc = $prod_data[$r][0];
-        //$rem_prod = ($meta_trim_prod - $prod_acc); //JAYRON
-        $rem_prod = ($meta_trim_prod);
+        $rem_prod = ($meta_trim_prod - $prod_acc);
         if($rem_prod < 0){ $rem_prod = 0; };
         $rem_days = ($month_all_days - $day_acc + 0);
         if($rem_days < 1){ $rem_days = 1; };
@@ -169,13 +228,13 @@ function _parse_data() {
     };
     //$datatable_metas[$index_prod][1] = $rem_meta;
     $datatable_metas[$index_prod][1] = $rem_meta;
-
+    
     //create piechart data
     $prod_mes = $datatable_metas[$index_prod][6 + $count];
     $rit_prod_full = 0;
     $rit_prod_full = (($prod_mes / ((($day - 1) * 86400) + $sec)) * ($month_all_days * 86400));
-    $dfc = $meta_trim_prod - $rit_prod_full + $prod_acc;
-    #$dfc = $rit_prod_full - $meta_trim_prod;
+    //$dfc = $meta_trim_prod - $rit_prod_full + $prod_acc;
+    $dfc =  $meta_trim_prod - $rit_prod_full;
     $rit_prod = $rit_prod_full - $prod_mes;
     if($dfc < 0){ $dfc = 0; };
     if($rit_prod < 0){ $rit_prod = 0; };

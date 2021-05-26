@@ -19,7 +19,7 @@ function _parse_layout($in) {
             border: 2px solid #343a40;"
     );
     $sizea = 350;
-    $number_of_metas = 3;
+    $number_of_metas = 5;
 
     $e = get_json("data.json");
     $datatable = $e["lam_frio_metas_datatable"]["data"];
@@ -46,6 +46,8 @@ function _parse_layout($in) {
         $e = array(
             ">",
             ">",
+            "<",
+            "<",
             ">"
         );
         $success = "color: rgb(48,112,48); background-color: rgba(84,224,64,0.6);";
