@@ -1,9 +1,10 @@
 <?php
+require_once("../../../methods.php");
 
 function _parse_data() {
 
-    $metas = get_json("http://127.0.0.1:3000/api/metas_lam_frio/");
-
+    $metas = get_json("http://localhost:3000/api/metas_lam_frio/");
+    
     if(count($metas) == 0){ return -1; };
 
     $sec = (time() - strtotime("today"));
@@ -42,15 +43,10 @@ function _parse_data() {
             $meses[$this_trim[2]-1]
         )
     );
-    $meta_trim_prod = 3570;
+    $meta_trim_prod = 3700;
     $indicadores = array(
-        "PRODUÇÃO" => array("name" => "Produção Laminação a Frio", "trim" => $meta_trim_prod),
-        "utilizacao" => array("name" => "Utilização %", "trim" => 60),
-        "sucateamento" => array("name" => "Sucateamento", "trim" => 3),
-        "custo" => array("name" => "Custo R$/Ton", "trim" => 110),
-        "5S" => array("name" => "5S", "trim" => 90)
+        "PRODUÇÃO" => array("name" => "Produção Laminação a Frio", "trim" => $meta_trim_prod)
     );
-
 
     $today_prod = 0;
     $mes1_prod = 0;
@@ -77,14 +73,13 @@ function _parse_data() {
         //condition to do calculations
         if ($ind == "Produção Laminação a Frio") {
             $raz = (4 - $count);
-            #$meta_trim_prod = ((($meta_trim_prod * 3) - $acc_trim + $mes3_prod ) / $raz);
+            //$meta_trim_prod = ((($meta_trim_prod * 3) - $acc_trim) / $raz);
 			$meta_trim_prod = ((($meta_trim_prod)));
             $ritmo_dia = (($item["dia"] / $sec) * 86400);
             $ritmo_trim = (($ritmo_trim * $count) / ((($trim_days - 1) * 86400) + $sec));
             $ritmo_trim *= (($trim_all_days * 86400) / 3);
             $ritmo_trim = round($ritmo_trim, 0);
-            
-            
+
         };
         if($ind == "Utilização %"){
             $item["dia"] = round($item["dia"],1);
@@ -169,7 +164,7 @@ function _parse_data() {
     if($prod_data == null || $dat_file == null || timestamp($timestamp) >= timestamp($dat_file) + 3600){
         $dat = array("dat" => $timestamp);
         put_json("dat.json",$dat);
-        $prod = get_json("http://127.0.0.1:3000/api/prod_lam_frio");
+        $prod = get_json("http://localhost:3000/api/prod_lam_frio");
         $prod_data = array();
         for ($i = 0; $i < count($prod); $i++) {
             $item = $prod[$i];
@@ -299,5 +294,5 @@ function _parse_data() {
         "count" => $count
     );
 };
-
+echo _parse_data();
 ?>
