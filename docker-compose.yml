@@ -1,0 +1,25 @@
+
+##########################################################################################################################
+
+version: "3"
+
+services:
+
+##########################################################################################################################
+
+  dyn:
+    image: php:8-apache
+    container_name: dyn-dash
+    build: ./dyn
+    command: bash -c "pip install -r requirements.txt && cd .. && python -m app"
+    env_file: .env
+    volumes:
+      - ./dyn/:/var/www/html/
+      - /usr/local/lib/python2.7/site-packages/
+    ports:
+      - "${PHP_APACHE_PORT}:${PHP_APACHE_PORT}"
+    depends_on:
+      - db
+    restart: always
+
+##########################################################################################################################
