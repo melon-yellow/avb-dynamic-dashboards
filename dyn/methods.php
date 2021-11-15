@@ -85,7 +85,8 @@ function utf8_convert_recursive(
 //utf8 json encode
 function utf8_json_encode($obj) {
     return json_encode(
-        utf8_convert_recursive($obj)
+        utf8_convert_recursive($obj),
+        JSON_PRETTY_PRINT
     );
 };
 
