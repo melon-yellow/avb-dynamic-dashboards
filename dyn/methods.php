@@ -33,8 +33,11 @@ function to_array(
         $arr = (array) $input;
         foreach($arr as &$item) {
             $item = to_array($item);
-        }; return $arr;
-    } else { return $input; };
+        };
+        return $arr;
+    } else {
+        return $input;
+    };
 };
 
 /*
@@ -46,20 +49,26 @@ function to_array(
 //utf8 convert
 function utf8_convert(string &$input){
     if(gettype($input) == "string"){
-        $input = mb_convert_encoding($input, "UTF-8",
-            mb_detect_encoding($input, "UTF-8, ISO-8859-1")); };
+        $input = mb_convert_encoding(
+            $input,
+            "UTF-8",
+            mb_detect_encoding(
+                $input,
+                "UTF-8, ISO-8859-1"
+            )
+        );
+    };
 };
 
 //utf8 convert recursive
 function utf8_convert_recursive(
     null|string|object|array $input
 ) {
-    if(is_object($input) || is_array($input)) {
+    if (gettype($input) == "string") {
+        utf8_convert($input);
+    } elseif (is_object($input) || is_array($input)) {
         $input = to_array($input);
         array_walk_recursive($input, "utf8_convert");
-    };
-    if(gettype($input) == "string"){
-        utf8_convert($input);
     };
     return $input;
 };
@@ -72,12 +81,16 @@ function utf8_convert_recursive(
 
 //utf8 json encode
 function utf8_json_encode($obj) {
-    return json_encode(utf8_convert_recursive($obj));
+    return json_encode(
+        utf8_convert_recursive($obj)
+    );
 };
 
 //utf8 json decode
 function utf8_json_decode(string $string) {
-    return utf8_convert_recursive(json_decode($string, true));
+    return utf8_convert_recursive(
+        json_decode($string, true)
+    );
 };
 
 /*
