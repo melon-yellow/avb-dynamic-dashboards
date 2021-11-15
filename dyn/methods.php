@@ -527,11 +527,9 @@ function url() {
 */
 
 //timestamp
-function timestamp(int $t=null): int {
-    if ($t !== null) {
-        echo($t);
+function timestamp(int $t=0): int {
+    if ($t !== 0) {
         $t = str_split((string)$t);
-        echo($t);
         return mktime(
             num($t[8].$t[9]),
             num($t[10].$t[11]),
