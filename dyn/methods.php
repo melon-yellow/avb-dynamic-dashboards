@@ -1,7 +1,10 @@
 <?php
 
 //pt to number
-function num($string, $ptbr=false){
+function num(
+    string $string,
+    bool $ptbr=false
+){
     $string = str_remove($string, " ");
     if($ptbr){
         $string = str_remove($string, ".");
@@ -11,7 +14,9 @@ function num($string, $ptbr=false){
 };
 
 //to array
-function to_array($input) {
+function to_array(
+    object|array $input
+) {
     if(is_object($input) || is_array($input)) {
         $arr = (array) $input;
         foreach($arr as &$item) {
@@ -21,14 +26,16 @@ function to_array($input) {
 };
 
 //utf8 convert
-function utf8_convert(&$input){
+function utf8_convert(string &$input){
     if(gettype($input) == "string"){
         $input = mb_convert_encoding($input, "UTF-8",
             mb_detect_encoding($input, "UTF-8, ISO-8859-1")); };
 };
 
 //utf8 convert recursive
-function utf8_convert_recursive($input){
+function utf8_convert_recursive(
+    string|object|array $input
+){
     if(is_object($input) || is_array($input)) {
         $input = to_array($input);
         array_walk_recursive($input, "utf8_convert"); };
@@ -42,11 +49,15 @@ function utf8_json_encode($obj) {
 };
 
 //utf8 json decode
-function utf8_json_decode($str) {
-    return utf8_convert_recursive(json_decode($str, true));
+function utf8_json_decode(string $string) {
+    return utf8_convert_recursive(json_decode($string, true));
 };
 
-function in_str($needle, $haystack, $all=false) {
+function in_str(
+    string $needle,
+    string $haystack,
+    bool $all=false
+) {
     if (!is_array($needle)) { $needle = array($needle); };
     $cond = false;
     for ($i = 0; $i < count($needle); $i++) {
@@ -58,7 +69,7 @@ function in_str($needle, $haystack, $all=false) {
 };
 
 //http abs address
-function http_addr($url){
+function http_addr(string $url){
     if(substr($url, 0, 7) === "http://"){ return $url; };
     $path = $_SERVER["SCRIPT_FILENAME"];
     $path = explode("/", $path);
@@ -73,14 +84,14 @@ function http_addr($url){
 };
 
 //check for http or https
-function is_http($url) {
+function is_http(string $url) {
     $a = strpos($url,"http://") === 0;
     $b = strpos($url,"https://") === 0;
     return ($a || $b);
 };
 
 //check if a given url exists
-function url_exists($url) {
+function url_exists(string $url) {
     $status = get_headers($url)[0];
     $a = !in_str("404", $status);
     $b = !in_str("500", $status);
@@ -88,14 +99,21 @@ function url_exists($url) {
 };
 
 //get json
-function get_json($url, $http=0, $utf8=1) {
+function get_json(
+    string $url,
+    bool $http=false,
+    bool $utf8=true
+) {
     $url = ($http && !is_http($url)) ? http_addr($url) : $url;
     $json = json_decode(file_get_contents($url), true);
     return $utf8 ? utf8_convert_recursive($json) : $json;
 };
 
 //put json
-function put_json($url, $obj){
+function put_json(
+    string $url,
+    $obj=null
+){
     file_put_contents($url, utf8_json_encode($obj));
 };
 
@@ -105,8 +123,11 @@ function echo_json($obj) {
 };
 
 //is equal
-function iseq($array, $compare_encoding){
-    if(gettype($array) !== "array"){ return false; };
+function iseq(
+    array $array,
+    bool $compare_encoding
+) {
+    if(!is_array($array)){ return false; };
     if(count($array) < 2){ return false; };
     if($compare_encoding !== null){
         if(gettype($compare_encoding) !== "boolean"){ return false; } else {
@@ -120,7 +141,10 @@ function iseq($array, $compare_encoding){
 };
 
 //remove sub strings from a string
-function str_remove($string, $remove){
+function str_remove(
+    string $string,
+    string $remove
+) {
     if(gettype($string) !== "string"){ return -1; };
     if(gettype($remove) !== "array"){
         if(gettype($remove) === "string"){
@@ -134,15 +158,18 @@ function str_remove($string, $remove){
 };
 
 //execute python script
-function py_exec($file) {
+function py_exec(string $file) {
     $py = 'c:\users\administrator\appdata\local\programs\python\python38\python.exe';
     $file = str_replace("/", "\\", realpath($file));
     return shell_exec($py." ".$file);
 };
 
 //SQL Query Function
-function query($db, $str){
-    $query = $db->prepare($str);
+function query(
+    $db,
+    string $string
+) {
+    $query = $db->prepare($string);
     $query->execute();
     $matrix = $query->fetchAll(\PDO::FETCH_ASSOC);
     $matrix = to_array($matrix);
@@ -151,7 +178,10 @@ function query($db, $str){
 };
 
 //index matrix by column
-function index($matrix, $set){
+function index(
+    object|array $matrix,
+    int|string $set
+) {
     $matrix = to_array($matrix);
     $keys = array_keys($matrix);
     $sets = array();
@@ -166,7 +196,9 @@ function index($matrix, $set){
 };
 
 //update datasets index
-function index_datasets($datasets){
+function index_datasets(
+    object|array $datasets
+) {
     if (!is_array($datasets)) { return False; };
     //get datasets index
     $datasets_path = array_slice(explode("/",$_SERVER["SCRIPT_NAME"]),4);
@@ -216,7 +248,7 @@ function index_datasets($datasets){
 };
 
  //route function
-function route($name) {
+function route(string $name) {
     //get path to methods
     function _methods(){
         $check = explode("/", str_remove($_SERVER["SCRIPT_NAME"], "/dyn/dash/"));
@@ -296,7 +328,7 @@ function route($name) {
 };
 
 //update function
-function update($time) {
+function update(int $time) {
     function _standard_layout() {
         $page = array(
             "layout" => array(
@@ -361,11 +393,11 @@ function update($time) {
 };
 
 //server config
-function server(){
+function server() {
     return "http://".$_SERVER["HTTP_HOST"];
 };
 
-function url(){
+function url() {
     return array(
         "dir" => $_SERVER["SCRIPT_FILENAME"],
         "http" => server().$_SERVER["SCRIPT_NAME"]
@@ -373,7 +405,7 @@ function url(){
 };
 
 //timestamp
-function timestamp($t=false){
+function timestamp(bool $t=false){
     if($t !== false){
         $t = str_split((string)$t);
         return mktime(
