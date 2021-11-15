@@ -29,10 +29,12 @@ function num(
 function to_array(
     object|array $input
 ) {
-    if(is_object($input) || is_array($input)) {
+    if (is_object($input) || is_array($input)) {
         $arr = (array) $input;
         foreach($arr as &$item) {
-            $item = to_array($item);
+            if (is_object($item) || is_array($item)) {
+                $item = to_array($item);
+            };
         };
         return $arr;
     } else {
@@ -66,7 +68,8 @@ function utf8_convert_recursive(
 ) {
     if (gettype($input) == "string") {
         utf8_convert($input);
-    } elseif (is_object($input) || is_array($input)) {
+    };
+    if (is_object($input) || is_array($input)) {
         $input = to_array($input);
         array_walk_recursive($input, "utf8_convert");
     };
