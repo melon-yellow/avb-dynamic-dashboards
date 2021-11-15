@@ -128,7 +128,7 @@ function _parse_data() {
     if($prod_data == null || $dat_file == null || timestamp($timestamp) >= timestamp($dat_file) + 3600){
         $dat = $timestamp;
         put_json("dat.json",$dat);
-        $prod = get_json("http://127.0.0.1:3000/avb/laminador/producao");
+        $prod = get_json("http://192.168.17.61:3000/avb/laminador/producao");
         $prod_data = array();
         for ($i = 0; $i < count($prod); $i++) {
             $dia = explode("/", $prod[$i]["data"])[0];
