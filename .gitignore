@@ -3,7 +3,7 @@
 **/.env
 
 # cache
-/dyn/*.json
+/dyn/dash/*.json
 
 # dependencies
 /dyn/src/
