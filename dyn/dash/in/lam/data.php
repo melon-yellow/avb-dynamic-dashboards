@@ -81,35 +81,35 @@ function _parse_data() {
         if($ind != ""){
             $this_meta = $metas[$keys[$i]];
             if($ind == "Produção da Laminação"){
-                $today_prod = (str_replace(",", ".", $this_meta["dia"]) - 0);
+                $today_prod = $this_meta["dia"];
             };
-            $ritmo_dia = (str_replace(",", ".", $this_meta["dia"]) - 0);
-            $ritmo_trim = (((str_replace(",", ".", $this_meta["mes1"]) - 0) + (str_replace(",", ".", $this_meta["mes2"]) - 0) + (str_replace(",", ".", $this_meta["mes3"]) - 0)) / $count);
-            $media_trim = (((str_replace(",", ".", $this_meta["mes1"]) - 0) + (str_replace(",", ".", $this_meta["mes2"]) - 0) + (str_replace(",", ".", $this_meta["mes3"]) - 0)) / 3);
+            $ritmo_dia = $this_meta["dia"];
+            $ritmo_trim = (($this_meta["mes1"] + $this_meta["mes2"] + $this_meta["mes3"]) / $count);
+            $media_trim = (($this_meta["mes1"] + $this_meta["mes2"] + $this_meta["mes3"]) / 3);
             if($ind == "Produção da Laminação"){
-                $ritmo_dia = (((str_replace(",", ".", $this_meta["dia"]) - 0) / $sec) * 86400);
+                $ritmo_dia = ((($this_meta["dia"]) / $sec) * 86400);
                 $ritmo_trim = (((($ritmo_trim * $count) / ((($trim_days - 1) * 86400) + $sec)) * ($trim_all_days * 86400)) / 3);
                 $ritmo_trim = round($ritmo_trim, 0);
             };
             $m_dts[$i + 2][0] = $ind;
-            if(is_numeric(str_replace(",", ".", $this_meta["meta"]))){
-                $m_dts[$i + 2][1] = (str_replace(",", ".", $this_meta["meta"]) - 0);
+            if(is_numeric($this_meta["meta"])) {
+                $m_dts[$i + 2][1] = $this_meta["meta"];
             } else {
                 $m_dts[$i + 2][1] = 0;
             };
             $m_dts[$i + 2][2] = round($ritmo_dia, 1);
-            $m_dts[$i + 2][3] = (str_replace(",", ".", $this_meta["dia"]) - 0);
+            $m_dts[$i + 2][3] = $this_meta["dia"];
             $m_dts[$i + 2][4] = $trim_metas[$i];
             $m_dts[$i + 2][5] = round($ritmo_trim, 1);
             $m_dts[$i + 2][6] = round($media_trim, 1);
-            $m_dts[$i + 2][7] = (str_replace(",", ".", $this_meta["mes1"]) - 0);
+            $m_dts[$i + 2][7] = $this_meta["mes1"];
             if($count > 1){
-                $m_dts[$i + 2][8] = (str_replace(",", ".", $this_meta["mes2"]) - 0);
+                $m_dts[$i + 2][8] = $this_meta["mes2"];
             } else {
                 $m_dts[$i + 2][8] = "--";
             };
             if($count > 2){
-                $m_dts[$i + 2][9] = (str_replace(",", ".", $this_meta["mes3"]) - 0);
+                $m_dts[$i + 2][9] = $this_meta["mes3"];
             } else {
                 $m_dts[$i + 2][9] = "--";
             };
