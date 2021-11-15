@@ -28,6 +28,7 @@ services:
     env_file: .env
     volumes:
       - ./dyn/:/var/www/html/dyn/
+      - ./dyn/config/:/usr/local/etc/php/conf.d/dyn/
     ports:
       - "${PHP_APACHE_PORT}:80"
     depends_on:
