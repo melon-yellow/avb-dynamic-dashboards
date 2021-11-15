@@ -526,8 +526,8 @@ function url() {
 */
 
 //timestamp
-function timestamp(bool $t=false){
-    if($t !== false){
+function timestamp(int $t=null){
+    if($t !== null){
         $t = str_split((string)$t);
         return mktime(
             num($t[8].$t[9]),
