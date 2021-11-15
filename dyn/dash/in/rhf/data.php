@@ -2,7 +2,7 @@
 
 function _parse_data() {
 
-    $json_dec = get_json("http://127.0.0.1:3000/api/furnace");
+    $json_dec = get_json("http://192.168.17.61:3000/avb/laminador/forno");
 
     if(count($json_dec) == 0){ return -1; };
 

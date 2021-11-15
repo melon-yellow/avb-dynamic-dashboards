@@ -2,7 +2,7 @@
 
 function _parse_data() {
 
-    $metas = get_json("http://127.0.0.1:3000/api/metas_lam_quente");
+    $metas = get_json("http://192.168.17.61:3000/avb/laminador/metas");
 
     if(count($metas) == 0){ return -1; };
 
