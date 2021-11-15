@@ -49,8 +49,8 @@ function to_array(
 */
 
 //utf8 convert
-function utf8_convert(string &$input){
-    if(gettype($input) == "string"){
+function utf8_convert(&$input){
+    if (gettype($input) == "string") {
         $input = mb_convert_encoding(
             $input,
             "UTF-8",
