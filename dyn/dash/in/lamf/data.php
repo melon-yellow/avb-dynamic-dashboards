@@ -4,7 +4,7 @@ function _parse_data() {
 
     $metas = get_json("http://192.168.17.61:3000/avb/trefila/metas");
 
-    if(count($metas) == 0){ return -1; };
+    if (count($metas) == 0) { return -1; };
 
     $sec = (time() - strtotime("today"));
     $day = (date("d") - 0);
@@ -96,9 +96,9 @@ function _parse_data() {
         }
         if($ind == "Custo R$/Ton"){
             $item["dia"] = round(($item["dia"]/$today_prod),1);
-            $item["mes1"] = round($item["mes1"]/$mes1_prod,1);
-            $item["mes2"] = round($item["mes2"]/$mes2_prod,1);
-            $item["mes3"] = round($item["mes3"]/$mes3_prod,1);
+            $item["mes1"] = round($item["mes1"]/($mes1_prod || 1),1);
+            $item["mes2"] = round($item["mes2"]/($mes2_prod || 1),1);
+            $item["mes3"] = round($item["mes3"]/($mes3_prod || 1),1);
             $item["trim"] = 100.0;
             $ritmo_dia = (($item["dia"] / $sec) * 86400);
             $acc_prod_custo = $mes1_prod + $mes2_prod + $mes3_prod  ;
@@ -112,9 +112,9 @@ function _parse_data() {
 
         }
         if($ind == "Sucateamento"){
-            $item["mes1"] = round($item["mes1"]/$mes1_prod,1);
-            $item["mes2"] = round($item["mes2"]/$mes2_prod,1);
-            $item["mes3"] = round($item["mes3"]/$mes3_prod,1);
+            $item["mes1"] = round($item["mes1"]/($mes1_prod || 1),1);
+            $item["mes2"] = round($item["mes2"]/($mes2_prod || 1),1);
+            $item["mes3"] = round($item["mes3"]/($mes3_prod || 1),1);
             $ritmo_dia = (($item["dia"] / $sec) * 86400);
             $acc_prod_custo = $mes1_prod + $mes2_prod + $mes3_prod  ;
             $ritmo_trim = ($ritmo_trim/$acc_prod_custo);
@@ -169,7 +169,7 @@ function _parse_data() {
     if($prod_data == null || $dat_file == null || timestamp($timestamp) >= timestamp($dat_file) + 3600){
         $dat = array("dat" => $timestamp);
         put_json("dat.json",$dat);
-        $prod = get_json("http://127.0.0.1:3000/api/prod_lam_frio");
+        $prod = get_json("http://192.168.17.61:3000/avb/trefila/producao");
         $prod_data = array();
         for ($i = 0; $i < count($prod); $i++) {
             $item = $prod[$i];
