@@ -438,6 +438,7 @@ function route(string $name) {
 
 //update function
 function update(int $time) {
+    // Standard Layout
     function _standard_layout() {
         $page = array(
             "layout" => array(
@@ -526,8 +527,8 @@ function url() {
 */
 
 //timestamp
-function timestamp(int $t=null){
-    if($t !== null){
+function timestamp(int $t=null): int {
+    if ($t !== null){
         $t = str_split((string)$t);
         return mktime(
             num($t[8].$t[9]),
