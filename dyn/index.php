@@ -9,41 +9,54 @@
         // get key params
         $key = @$_REQUEST["key"];
         $key = utf8_convert_recursive($key);
+
         // check key
         if ($key == null || $key == "") {
             header("Location: index.php?key=dash");
-            return false; };
+            return false;
+        };
+
         // look for key
         $path = str_replace(".","/",$key);
         $item = get_json($path."/main.php?action=route&path=this",1);
         $parent = get_json($path."/main.php?action=route&path=parent",1);
+
         // verify response
         if (!is_array($parent) || !array_key_exists("this", $parent)) {
-            $parent = array("this" => null); };
+            $parent = array("this" => null);
+        };
         if (!is_array($item) || !array_key_exists("this", $item)) {
             if (in_str(".", $key)) {
                 $key = implode(".",array_slice(explode(".",$key),0,-1));
                 header("Location: index.php?key=".$key);
-            } else { header("Location: index.php?key=dash"); };
-            return false; };
+            } else {
+                header("Location: index.php?key=dash");
+            };
+            return false;
+        };
         // return data
         return array(
             "n" => $item["this"],
             "p" => $parent["this"],
             "dir" => $path, "key" => $key);
     };
+
     // execute dyn
     $dyn = dyn();
+
     // info array
     $info = array(
         "adr" => server()."/dyn"."/",
         "dir" => "", "key" => "",
-        "title" => "Not Found");
+        "title" => "Not Found"
+    );
+
     // check dyn
     if (is_array($dyn)) {
         $info["title"] = ($dyn["p"] == null ? "" : $dyn["p"]." - ").$dyn["n"];
         $info["dir"] = $info["adr"].$dyn["dir"];
         $info["key"] = $dyn["key"];
+
         // update
         if (@$_REQUEST["update"] == "force") {
             $update = get_json($info["dir"]."/main.php?action=update&do=force");
