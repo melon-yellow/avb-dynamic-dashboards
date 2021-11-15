@@ -34,12 +34,15 @@ function utf8_convert(string &$input){
 
 //utf8 convert recursive
 function utf8_convert_recursive(
-    string|object|array $input
-){
+    null|string|object|array $input
+) {
     if(is_object($input) || is_array($input)) {
         $input = to_array($input);
-        array_walk_recursive($input, "utf8_convert"); };
-    if(gettype($input) == "string"){ utf8_convert($input); };
+        array_walk_recursive($input, "utf8_convert");
+    };
+    if(gettype($input) == "string"){
+        utf8_convert($input);
+    };
     return $input;
 };
 
