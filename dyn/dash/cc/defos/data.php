@@ -12,8 +12,8 @@ function _parse_data() {
     $dbname = "ANALYSES";
 
     // DBs
-    $ld_db = new PDO("odbc:server=".$ld_host."; database=".$dbname.";", $ld_user, $password);
-    $fp_db = new PDO("odbc:server=".$fp_host."; database=".$dbname.";", $fp_user, $password);
+    $ld_db = new PDO("sqlsrv:server=".$ld_host."; database=".$dbname.";", $ld_user, $password);
+    $fp_db = new PDO("sqlsrv:server=".$fp_host."; database=".$dbname.";", $fp_user, $password);
 
 #############################################################################################################################
 
