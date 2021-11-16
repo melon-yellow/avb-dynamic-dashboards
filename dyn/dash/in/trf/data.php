@@ -2,7 +2,7 @@
 
 function _parse_data() {
 
-    $js = get_json("http://192.168.17.61:3000/avb/trefila/produtividade");
+    $js = get_json(getenv('AVB_APP_TREFILA_PRODUTIVIDADE'));
 
     if(count($js) == 0){ return -1; };
 

@@ -2,8 +2,8 @@
 
 function _parse_data() {
 
-    $json_dec = get_json("http://192.168.17.61:3000/avb/laminador/rfa/");
-    $sp_dec = get_json("http://192.168.17.61:3000/avb/laminador/rfal2/");
+    $json_dec = get_json(getenv('AVB_APP_LAMINADOR_RFA'));
+    $sp_dec = get_json(getenv('AVB_APP_LAMINADOR_RFAL2'));
     
     if(count($json_dec) == 0 || count($sp_dec) == 0){ return -1; };
 

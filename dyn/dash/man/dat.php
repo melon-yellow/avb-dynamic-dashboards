@@ -3,7 +3,7 @@
 function _process_data(array $equip, string $filename="data.json"){
 
     // Setup cURL
-    $ch = curl_init('http://192.168.17.61:3000/avb/sap/preditivas/');
+    $ch = curl_init(getenv('AVB_APP_SAP_PREDITIVAS'));
     curl_setopt_array($ch, array(
         CURLOPT_POST => TRUE,
         CURLOPT_RETURNTRANSFER => TRUE,

@@ -5,8 +5,8 @@ function _parse_data() {
 #############################################################################################################################
 
     // get data
-    $ld = get_json("http://192.168.17.61:3000/avb/aciaria/ld/espectrometro/");
-    $fp = get_json("http://192.168.17.61:3000/avb/aciaria/fp/espectrometro/");
+    $ld = get_json(getenv('AVB_APP_ACIARIA_LD_SPEC'));
+    $fp = get_json(getenv('AVB_APP_ACIARIA_FP_SPEC'));
 
 #############################################################################################################################
 

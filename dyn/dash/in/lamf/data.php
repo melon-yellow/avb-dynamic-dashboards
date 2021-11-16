@@ -2,7 +2,7 @@
 
 function _parse_data() {
 
-    $metas = get_json("http://192.168.17.61:3000/avb/trefila/metas");
+    $metas = get_json(getenv('AVB_APP_TREFILA_METAS'));
 
     if (count($metas) == 0) { return -1; };
 
@@ -169,7 +169,7 @@ function _parse_data() {
     if($prod_data == null || $dat_file == null || timestamp($timestamp) >= timestamp($dat_file) + 3600){
         $dat = array("dat" => $timestamp);
         put_json("dat.json",$dat);
-        $prod = get_json("http://192.168.17.61:3000/avb/trefila/producao");
+        $prod = get_json(getenv('AVB_APP_TREFILA_PRODUCAO'));
         $prod_data = array();
         for ($i = 0; $i < count($prod); $i++) {
             $item = $prod[$i];

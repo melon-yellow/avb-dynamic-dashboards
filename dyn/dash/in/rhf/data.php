@@ -2,7 +2,7 @@
 
 function _parse_data() {
 
-    $json_dec = get_json("http://192.168.17.61:3000/avb/laminador/forno");
+    $json_dec = get_json(getenv('AVB_APP_LAMINADOR_FORNO'));
 
     if(count($json_dec) == 0){ return -1; };
 
