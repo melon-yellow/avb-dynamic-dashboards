@@ -1,26 +1,32 @@
 <?php
 
-function _process_data($equip, $filename="data.json"){
+function _process_data(array $equip, string $filename="data.json"){
 
-    // define the connection to database
-    $host = "10.10.0.29";
-    $port = "";
-    $dbname = "ECP";
-    $user = "pm_sap";
-    $password = "Avb*2020";
+    // Setup cURL
+    $ch = curl_init('http://192.168.17.61:3000/avb/sap/preditivas/');
+    curl_setopt_array($ch, array(
+        CURLOPT_POST => TRUE,
+        CURLOPT_RETURNTRANSFER => TRUE,
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json'
+        ),
+        CURLOPT_POSTFIELDS => json_encode(
+            array( 'equip' => $equip )
+        )
+    ));
 
-    // connect to microsoft sql server database
-    $db = new PDO("sqlsrv:server=".$host.$port."; database=".$dbname.";", $user, $password);
+    // Get Data
+    $res = curl_exec($ch);
+    $res = ($res === FALSE) ? null : utf8_json_decode($res);
 
-    $CD = "(2+2=5)";
-    for ($i = 0; $i < count($equip); $i++) {
-        $CD .= " OR (\"Equipamento\" = ".$equip[$i].")";
-    };
+    // Close the cURL handler
+    curl_close($ch);
 
     // get data
-    $matrix = query($db, "SELECT * FROM PM_MEASURING_POINT WHERE ".$CD." ORDER BY \"Item Medido\", \"Data Medição\", \"Hora Medição\"");
+    $matrix = $res["data"];
+
     // get first element
-    $first = query($db, "SELECT TOP 1 * FROM PM_MEASURING_POINT WHERE ".$CD." ORDER BY \"Data Medição\", \"Hora Medição\"");
+    $first = $res["first"];
     $first = (is_array($first) && count($first) != 0) ? (double)$first[0]["Data Medição"] : 99999999;
 
     // get file data

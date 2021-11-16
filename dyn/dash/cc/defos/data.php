@@ -4,80 +4,9 @@ function _parse_data() {
 
 #############################################################################################################################
 
-    $ld_host = "192.168.17.42";
-    $fp_host = "192.168.17.43";
-    $ld_user = "cv.avb";
-    $fp_user = "fp.avb";
-    $password = "avbfpcv*56";
-    $dbname = "ANALYSES";
-
-    // DBs
-    $ld_db = new PDO("sqlsrv:server=".$ld_host."; database=".$dbname.";", $ld_user, $password);
-    $fp_db = new PDO("sqlsrv:server=".$fp_host."; database=".$dbname.";", $fp_user, $password);
-
-#############################################################################################################################
-
-    function query_expec($index) {
-
-        $aco = ($index != 0) ? "16" : "17";
-        $corr_gusa = ($index != 0) ? "" : "corrida_gusa.value as 'Corrida Gusa',";
-        $left_join = ($index != 0) ? "" : implode(" ", array(
-            "LEFT JOIN Attributes corrida_gusa (nolock) ON",
-            "corrida_gusa.LinkAnalyses = Elements.LinkAnalyses and",
-            "corrida_gusa.LinkName = 21")
-        );
-
-        return implode(" ",
-            array(
-                "declare @DATA as datetime",
-                "set @DATA=getdate()-3",
-                "SELECT",
-                "Elements.LinkAnalyses as 'ID',",
-                "convert(varchar(10), analyses.Anadatetime, 103) AS data,",
-                "convert(varchar(10), analyses.Anadatetime, 108) AS hora,",
-                "origem.value as 'Origem',",
-                "tipo_aço.Value as 'Tipo Aço', ",
-                $corr_gusa,
-                "substring(Attributes.Value, 1, 7) AS Corrida,",
-                "Attributes.Value AS Corrida_Completa,",
-                "turma.value as 'Turma',",
-                "DisplayName.Name as 'Elemento',",
-                "CASE",
-                "WHEN DisplayName.Name like 'N' then Elements.Value*10000",
-                "ELSE Elements.Value",
-                "end as 'Dados'",
-                "FROM",
-                "Elements (nolock)",
-                "INNER JOIN DisplayName (nolock) ON",
-                "DisplayName.ID = Elements.LinkName",
-                "INNER JOIN Analyses (nolock) ON",
-                "Analyses.ID = Elements.LinkAnalyses",
-                "INNER JOIN Attributes (nolock) ON",
-                "Attributes.LinkAnalyses = Elements.LinkAnalyses and",
-                "Attributes.LinkName = 4",
-                "INNER JOIN Attributes origem (nolock) ON",
-                "origem.LinkAnalyses = Elements.LinkAnalyses and", 
-                "origem.LinkName = 15",
-                "INNER JOIN Attributes tipo_aço (nolock) ON",
-                "tipo_aço.LinkAnalyses = Elements.LinkAnalyses and",
-                "tipo_aço.LinkName =".$aco,
-                "INNER JOIN Attributes turma (nolock) ON",
-                "turma.LinkAnalyses = Elements.LinkAnalyses and",
-                "turma.LinkName = 18",
-                $left_join,
-                "WHERE",
-                "DisplayName.Name in ('P') and",
-                "Attributes.Value like '%%' and anadatetime>=@DATA",
-                "ORDER BY analyses.Anadatetime DESC"
-            )
-        );
-    };
-
     // get data
-    $ld = query($ld_db, query_expec(0));
-    $fp = query($fp_db, query_expec(1));
-    $ld_db = null;
-    $fp_db = null;
+    $ld = get_json("http://192.168.17.61:3000/avb/aciaria/ld/espectrometro/");
+    $fp = get_json("http://192.168.17.61:3000/avb/aciaria/fp/espectrometro/");
 
 #############################################################################################################################
 
