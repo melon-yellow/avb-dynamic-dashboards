@@ -217,7 +217,7 @@ function iseq(
 //remove sub strings from a string
 function str_remove(
     string $string,
-    string $remove
+    string|array $remove
 ) {
     if(gettype($string) !== "string"){ return -1; };
     if(gettype($remove) !== "array"){
