@@ -1,7 +1,11 @@
 FROM php:8-apache
 
-# Install Dependencies
+# Install Calendar
 RUN docker-php-ext-install calendar
-RUN docker-php-ext-install pdo pdo_odbc
+
+# Install PDO ODBC
+RUN apt-get install unixodbc unixodbc-dev -y \
+ && docker-php-ext-configure pdo_odbc --with-pdo-odbc=unixODBC,/usr \
+ && docker-php-ext-install pdo_odbc
 
 WORKDIR /var/www/html/
