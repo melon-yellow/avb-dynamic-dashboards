@@ -21,17 +21,34 @@ services:
 
 ##########################################################################################################################
 
+  dyn-webpack:
+    image: node:16
+    container_name: sx-dyn-webpack
+    build: ./webpack
+    command: bash -c "yarn && yarn build"
+    env_file:
+      - .env
+    volumes:
+      - ./webpack/:/usr/app/
+      - /usr/app/build/
+    expose:
+      - ${WEBPACK_SERVICE_PORT}
+    restart: always
+
+##########################################################################################################################
+
   dyn:
-    image: php:8-apache
+    image: php:8
     container_name: dyn-dash
     build: ./php
     env_file: .env
     volumes:
-      - ./php/:/var/www/html/dyn/
+      - ./php/:/var/www/html/
     ports:
       - "${PHP_APACHE_PORT}:80"
     depends_on:
       - db
+      - dyn-webpack
     restart: always
 
 ##########################################################################################################################

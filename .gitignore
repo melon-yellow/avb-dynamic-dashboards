@@ -3,10 +3,10 @@
 **/.env
 
 # cache
-/dyn/dash/*.json
+/php/dash/*.json
 
 # dependencies
-/dyn/src/
+/webpack/node_modules/
 
 # db
 /db/data/
