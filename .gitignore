@@ -1,4 +1,8 @@
 
+# ide
+/.idea
+/.vscode
+
 # env
 **/.env
 
@@ -10,3 +14,18 @@
 
 # db
 /db/data/
+
+# laravel
+/php/node_modules
+/php/public/hot
+/php/public/storage
+/php/storage/*.key
+/php/vendor
+/php/.env
+/php/.env.backup
+/php/.phpunit.result.cache
+/php/docker-compose.override.yml
+/php/Homestead.json
+/php/Homestead.yaml
+/php/npm-debug.log
+/php/yarn-error.log
