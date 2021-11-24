@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["resources/js/**/*"]
+}
+  
