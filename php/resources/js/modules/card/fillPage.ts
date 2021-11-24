@@ -1,5 +1,5 @@
 //Fill Page Function
-export async function fillPage(thislayout, i, location, ref) {
+export default function fillPage(thislayout, i, location, ref) {
 
     let div = "-";
     if (ref == null) {

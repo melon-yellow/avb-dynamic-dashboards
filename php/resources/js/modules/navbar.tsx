@@ -4,6 +4,7 @@
 */
 
 // Imports
+import ReactDOM from 'react-dom'
 import axios from 'axios'
 import { is } from 'ts-misc/dist/utils/guards'
 
@@ -39,48 +40,58 @@ function isJSONRouteCollection(obj: unknown): obj is JSONRouteCollection {
 
 // Get path to current page
 const resCurrent = await axios.get(`${headers.dir}/main.php?action=route&path=this`)
-let current: JSONRoute | null = resCurrent?.data
-if (!isJSONRoute(current)) current = null
+let current: JSONRoute = resCurrent?.data
+if (!isJSONRoute(current)) throw new Error('invalid route "this"')
 
 // Get path to parent
 const resParent = await axios.get(`${headers.dir}/main.php?action=route&path=parent`)
-let parent: JSONRoute | null = resParent?.data
+let parent: JSONRoute = resParent?.data
 if (!isJSONRoute(parent)) parent = current
 
 // Get path to group
 const resChilds = await axios.get(`${headers.dir}/main.php?action=route&path=childs`)
-let group: JSONRouteCollection | null = resChilds?.data
+let group: JSONRouteCollection = resChilds?.data
 if (!isJSONRouteCollection(group)) {
     const resBrothers = await axios.get(`${headers.dir}/main.php?action=route&path=brothers`)
     group = resBrothers?.data
-    if (!isJSONRouteCollection(group)) group = null
+    if (!isJSONRouteCollection(group)) throw new Error('invalid route "group"')
 }
 
 /*
 ##########################################################################################################################
 */
 
-// Create topnav title
-document.getElementById('topNav')
-    ?.insertAdjacentHTML('beforeend',
-        `<a id="${parent?.key}" ` +
-        `href="index.php?key=${parent?.key}" ` +
-        'class="navbar-brand font-weight-bold">' +
-        `${parent?.this}</a>`
-    )
+// Add Title to TopNav
+const TopNav = document.getElementById('topNav')
+if (!TopNav) throw new Error('couldnt find "#topNav"')
+ReactDOM.render(
+    <a
+        id={parent?.key}
+        href={`?key=${parent?.key}`}
+        className={[
+            'navbar-brand',
+            'font-weight-bold'
+        ].join(' ')}
+    >{parent?.this}</a>,
+    TopNav
+)
 
-// Create navbar items
-if (group) {
-    for (const item in group) {
-        document.getElementById('navBar')
-            ?.insertAdjacentHTML('beforeend',
-                `<a id="${group[item].key}" ` +
-                `href="index.php?key=${group[item].key}" ` +
-                'class="nav-link">' +
-                `${group[item].this}</a>`
-            )
-    }
+// Create NavBar Items
+const navBarItems: JSX.Element[] = []
+for (const item in group) {
+    navBarItems.push(
+        <a
+            id={group[item]?.key}
+            href={`?key=${group[item]?.key}`}
+            className="nav-link"
+        >{group[item]?.this}</a>
+    )
 }
+
+// Add Items to NavBar
+const NavBar = document.getElementById('navBar')
+if (!NavBar) throw new Error('couldnt find "#navBar"')
+ReactDOM.render(navBarItems, NavBar)
 
 // Highlight current page on navbar
 for (const item in group) {
@@ -90,18 +101,27 @@ for (const item in group) {
     }
 }
 
-// Creates the title of the page container
-document.getElementById('pageContainer')
-    ?.insertAdjacentHTML('beforeend',
-        '<div id="containerTitle"' + 
-        'class="container-title align-items-center font-weight-bold">' +
-        `${current?.this}</div>`
-    )
+// Get Page Container
+const PageContainer = document.getElementById('pageContainer')
+if (!PageContainer) throw new Error('couldnt find "#pageContainer"')
+
+// Add Title to Page Container
+ReactDOM.render(
+    <div
+        id="containerTitle"
+        className={[
+            'container-title',
+            'align-items-center',
+            'font-weight-bold',
+            'text-dark'
+        ].join(' ')}
+    >{current?.this}</div>,
+    PageContainer
+)
 
 // Set minimum size of page as navSize + 100
-const navSize = Number(document.getElementById('navBar')?.offsetHeight)
-const cont = document.getElementById('pageContainer')
-if (cont) cont.style.minHeight = `${navSize + 100}px`
+const navSize = Number(NavBar?.offsetHeight)
+PageContainer.style.minHeight = `${navSize + 100}px`
 
 /*
 ##########################################################################################################################

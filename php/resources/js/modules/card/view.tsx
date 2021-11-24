@@ -9,6 +9,8 @@ import ReactDOM from 'react-dom'
 import axios from 'axios'
 
 // Modules
+import fillCard from './fillCard'
+import fillPage from './fillPage'
 import * as canvasDisplay from './functions/canvas-display'
 import * as chartFunctions from './functions/chart-functions'
 import * as dropdownLegend from './functions/dropdown-legend'
@@ -32,16 +34,20 @@ const layout: DynamicLayout = {}
 */
 
 const checkLayout = (
-    current: DynamicLayout, newLayout: DynamicLayout
-) => (JSON.stringify(current) != JSON.stringify(newLayout))
+    current: DynamicLayout,
+    newLayout: DynamicLayout
+) => (JSON.stringify(current) !== JSON.stringify(newLayout))
 
 /*
 ##########################################################################################################################
 */
 
-const writeLayout = (thislayout, location, ref) => {
-    for (let i = 0; i < thislayout.length; i++) {
-        let rtrn = await window.page.main.dyn.fillPage(thislayout[i], i, location, ref);
+const writeLayout = (
+    layout: DynamicLayout,
+    element: Element
+) => {
+    for (let i = 0; i < layout.length; i++) {
+        let rtrn = await fillPage(thislayout[i], i, location, ref);
         let nextlayout = thislayout[i].content;
         let nextlocation = document.getElementById(rtrn.id);
         if (nextlayout != null) {
@@ -55,30 +61,30 @@ const writeLayout = (thislayout, location, ref) => {
 ##########################################################################################################################
 */
 
-async function fill() {
+const fill = () => {
     // Get Page Title
-    const containerTitle = document.getElementById('containerTitle')?.innerHTML
+    const containerTitle = document.getElementById('containerTitle')?.innerText
+
     // Get Page Container
-    const PageContainer = document.querySelector('#pageContainer')
+    const PageContainer = document.getElementById('pageContainer')
+    if (!PageContainer) throw new Error('something went wrong')
+
     // Add Title to Page Container
     ReactDOM.render(
-        React.createElement(() => (
-            <div
-                id="containerTitle"
-                className={[
-                    'container-title',
-                    'align-items-center',
-                    'font-weight-bold',
-                    'text-dark'
-                ].join(' ')}
-            >{containerTitle}</div>
-        )),
+        <div
+            id="containerTitle"
+            className={[
+                'container-title',
+                'align-items-center',
+                'font-weight-bold',
+                'text-dark'
+            ].join(' ')}
+        >{containerTitle}</div>,
         PageContainer
     )
+
     // Run Fill Page Function
-    let location = document.getElementById("pageContainer")
-    window.page.main.dyn.show["done"] = true;
-    return await writeLayout(layout, PageContainer);
+    return writeLayout(layout, PageContainer)
 }
 
 /*
@@ -172,7 +178,7 @@ export async function render(layout: unknown) {
     if (conditions > 0) {
         //Fill All Function
         if (count.cards != window.page.cards.length || count.changes > 0 || first) {
-            let fal = await window.page.main.dyn.show.fillAll();
+            let fal = fill();
         };
         //Fill Card Function
         for (let i = 0; i < count.cards; i++) {

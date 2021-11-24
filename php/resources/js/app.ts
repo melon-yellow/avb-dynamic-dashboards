@@ -1,7 +1,7 @@
 
 // Modules
 import * as navbar from './modules/navbar.js'
-import * as sidenav from './modules/sidenav.js'
+import * as events from './modules/events.js'
 import * as dynamic from './modules/dynamic.js'
 
 // Headers
@@ -14,6 +14,6 @@ export const headers = {
 // Page
 export const page = {
     navbar,
-    sidenav,
+    events,
     dynamic
 } as const
