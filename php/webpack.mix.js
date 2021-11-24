@@ -12,10 +12,12 @@ const mix = require('laravel-mix');
  */
 
 mix
+  .postCss('resources/css/app.css', 'public/css', [])
+
+mix
   .ts('resources/js/app.ts', 'public/js')
   .react()
   .extract(['react'])
-  .postCss('resources/css/app.css', 'public/css', [])
   .webpackConfig({
     module: {
       rules: [

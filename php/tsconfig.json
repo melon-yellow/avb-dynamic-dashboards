@@ -1,12 +1,30 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2020",
     "module": "esnext",
     "moduleResolution": "node",
-    "baseUrl": "./",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": "./",
+    "paths": {}
   },
-  "include": ["resources/js/**/*"]
+  "include": [
+    "resources/js/**/*.ts",
+    "resources/js/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
-  
