@@ -1,2 +1,2 @@
-dyn/css/* linguist-vendored
-dyn/js/* linguist-vendored
+dyn/css/** linguist-vendored
+dyn/js/** linguist-vendored
