@@ -4,7 +4,7 @@ function _parse_data() {
 
     $json_dec = get_json(getenv('AVB_APP_LAMINADOR_FORNO'));
 
-    if(count($json_dec) == 0) { return $json_dec[1]; };
+    if(count($json_dec) == 0) { return -1; };
 
     //CREATE NAMES
     $names = array(
