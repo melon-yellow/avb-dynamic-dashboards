@@ -42,12 +42,11 @@ function _parse_data() {
             $meses[$this_trim[2]-1]
         )
     );
-    $meta_trim_prod = 3570;
+    $meta_trim_prod = 2000;
     $indicadores = array(
         "PRODUÇÃO" => array("name" => "Produção Laminação a Frio", "trim" => $meta_trim_prod),
-        "utilizacao" => array("name" => "Utilização %", "trim" => 60),
         "sucateamento" => array("name" => "Sucateamento", "trim" => 3),
-        "custo" => array("name" => "Custo R$/Ton", "trim" => 110),
+        "custo" => array("name" => "Custo R$/Ton", "trim" => 130),
         "5S" => array("name" => "5S", "trim" => 90)
     );
 
