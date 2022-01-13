@@ -9,7 +9,7 @@ services:
 
   db:
     image: mysql:8
-    container_name: db-dyn
+    container_name: avb-dash-db
     build: ./db
     command: --default-authentication-plugin=mysql_native_password
     env_file: .env
@@ -23,7 +23,7 @@ services:
 
   dyn:
     image: php:8-apache
-    container_name: dyn-dash
+    container_name: avb-dash
     build: ./dyn
     env_file: .env
     volumes:
