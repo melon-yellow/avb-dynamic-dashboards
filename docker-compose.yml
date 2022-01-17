@@ -8,7 +8,7 @@ services:
 ##########################################################################################################################
 
   db:
-    image: mysql:8
+    image: melon-yellow/mysql-8-avb-dash-db
     container_name: avb-dash-db
     build: ./db
     command: --default-authentication-plugin=mysql_native_password
@@ -22,7 +22,7 @@ services:
 ##########################################################################################################################
 
   dyn:
-    image: php:8-apache
+    image: melon-yellow/php-8-apache-avb-dash
     container_name: avb-dash
     build: ./dyn
     env_file: .env
