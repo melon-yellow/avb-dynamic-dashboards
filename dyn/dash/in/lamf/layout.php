@@ -45,7 +45,6 @@ function _parse_layout($in) {
     function _get_style($metas_style, $datatable, $valor, $meta){
         $e = array(
             ">",
-            ">",
             "<",
             "<",
             ">"
