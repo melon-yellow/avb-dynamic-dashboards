@@ -46,7 +46,7 @@ function _parse_data() {
     $indicadores = array(
         "PRODUÇÃO" => array("name" => "Produção Laminação a Frio", "trim" => $meta_trim_prod),
         "sucateamento" => array("name" => "Sucateamento", "trim" => 3),
-        "custo" => array("name" => "Custo R$/Ton", "trim" => 160),
+        "custo" => array("name" => "Custo R$/Ton", "trim" => 160, "meta" => 160),
         "5S" => array("name" => "5S", "trim" => 90)
     );
 
