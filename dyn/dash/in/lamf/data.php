@@ -42,7 +42,7 @@ function _parse_data() {
             $meses[$this_trim[2]-1]
         )
     );
-    $meta_trim_prod = 2001;
+    $meta_trim_prod = 2000;
     $indicadores = array(
         "PRODUÇÃO" => array("name" => "Produção Laminação a Frio", "trim" => $meta_trim_prod),
         "sucateamento" => array("name" => "Sucateamento", "trim" => 3),
