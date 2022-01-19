@@ -46,7 +46,7 @@ function _parse_data() {
     $indicadores = array(
         "PRODUÇÃO" => array("name" => "Produção Laminação a Frio", "trim" => $meta_trim_prod),
         "sucateamento" => array("name" => "Sucateamento", "trim" => 3),
-        "custo" => array("name" => "Custo R$/Ton", "trim" => 130),
+        "custo" => array("name" => "Custo R$/Ton", "trim" => 160),
         "5S" => array("name" => "5S", "trim" => 90)
     );
 
@@ -95,9 +95,9 @@ function _parse_data() {
         }
         if($ind == "Custo R$/Ton"){
             $item["dia"] = round(($item["dia"]/$today_prod),1);
-            $item["mes1"] = round($item["mes1"]/($mes1_prod || 1),1);
-            $item["mes2"] = round($item["mes2"]/($mes2_prod || 1),1);
-            $item["mes3"] = round($item["mes3"]/($mes3_prod || 1),1);
+            $item["mes1"] = round($item["mes1"]/($mes1_prod),1);
+            $item["mes2"] = round($item["mes2"]/($mes2_prod),1);
+            $item["mes3"] = round($item["mes3"]/($mes3_prod),1);
             $item["trim"] = 100.0;
             $ritmo_dia = (($item["dia"] / $sec) * 86400);
             $acc_prod_custo = $mes1_prod + $mes2_prod + $mes3_prod  ;
@@ -111,9 +111,9 @@ function _parse_data() {
 
         }
         if($ind == "Sucateamento"){
-            $item["mes1"] = round($item["mes1"]/($mes1_prod || 1),1);
-            $item["mes2"] = round($item["mes2"]/($mes2_prod || 1),1);
-            $item["mes3"] = round($item["mes3"]/($mes3_prod || 1),1);
+            $item["mes1"] = round($item["mes1"]/($mes1_prod),1);
+            $item["mes2"] = round($item["mes2"]/($mes2_prod),1);
+            $item["mes3"] = round($item["mes3"]/($mes3_prod),1);
             $ritmo_dia = (($item["dia"] / $sec) * 86400);
             $acc_prod_custo = $mes1_prod + $mes2_prod + $mes3_prod  ;
             $ritmo_trim = ($ritmo_trim/$acc_prod_custo);
