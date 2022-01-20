@@ -2,9 +2,9 @@
 
 function _parse_data() {
 
-    echo_json("test");
-
     $metas = get_json(getenv('AVB_APP_TREFILA_METAS'));
+
+    echo_json($metas);
 
     if (count($metas) == 0) { return -1; };
 
