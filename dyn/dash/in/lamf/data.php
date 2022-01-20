@@ -50,25 +50,16 @@ function _parse_data() {
         "5S" => array("name" => "5S", "trim" => 90)
     );
 
-
-    $today_prod = 0;
-    $mes1_prod = 0;
-    $mes2_prod = 0;
-    $mes3_prod = 0;
-    
+    $today_prod = $metas["PRODUÇÃO"]["dia"];
+    $mes1_prod  = $metas["PRODUÇÃO"]["mes1"];
+    $mes2_prod  = $metas["PRODUÇÃO"]["mes2"];
+    $mes3_prod  = $metas["PRODUÇÃO"]["mes3"];
 
     //foreach meta key
     $keys = array_keys($indicadores);
     for($i = 0; $i < count($keys); $i++){
         $item = $metas[$keys[$i]];
         $ind = $indicadores[$keys[$i]]["name"];
-        if($ind == "Produção Laminação a Frio"){
-            #$item['dia'] = $item['dia']*10; // ajuste mudança homerico 30/04/21
-            $today_prod = $item["dia"];
-            $mes1_prod = $item["mes1"];
-            $mes2_prod = $item["mes2"];
-            $mes3_prod = $item["mes3"];
-        };
         $ritmo_dia = $item["dia"];
         $acc_trim = ($item["mes1"] + $item["mes2"] + $item["mes3"]);
         $ritmo_trim = ($acc_trim / $count);
