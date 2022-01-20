@@ -8,8 +8,8 @@ services:
 ##########################################################################################################################
 
   dyn:
-    image: melon-yellow/php-8-apache-avb-dash
-    container_name: avb-dash
+    image: melon-yellow/php-8-apache-avb-dyn-dash
+    container_name: avb-dyn-dash
     build: ./dyn
     env_file: .env
     volumes:
