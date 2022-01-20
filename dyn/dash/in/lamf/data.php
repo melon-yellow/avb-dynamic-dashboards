@@ -4,8 +4,6 @@ function _parse_data() {
 
     $metas = get_json(getenv('AVB_APP_TREFILA_METAS'));
 
-    echo_json(getenv('AVB_APP_TREFILA_METAS'));
-
     if (count($metas) == 0) { return -1; };
 
     $sec = (time() - strtotime("today"));
