@@ -566,7 +566,7 @@ function rest($method, $url, $data = null) {
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     $result = curl_exec($curl);
     curl_close($curl);
-    echo_json(array("rest" => $result));
+    echo_json($result);
     $json = json_decode($result, true);
     return utf8_convert_recursive($json);
 };
