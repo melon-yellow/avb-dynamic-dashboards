@@ -22,20 +22,20 @@ export let lastUpdate: number
 ##########################################################################################################################
 */
 
+// No Cache Bypass
+const layout = (nc: unknown) => `${headers.dir}/layout.json?nocache=${nc}`
+
+
 // Cyclic Update Request
 const update = async() => {
-    // No Cache Bypass
-    const layout = (nc: unknown) => `${headers.dir}/layout.json?nocache=${nc}`
-
     // First Run
     if (lastUpdate === undefined) {
-        const stale = await axios.get(layout(new Date().getTime()))
-        view.render(stale?.data)
+        const { data: stale } = await axios.get(layout(new Date().getTime()))
+        view.render(stale)
     }
 
     // Request Update
-    const updateResponse = await axios.get(`${headers.dir}/main.php?action=update`)
-    const update = updateResponse?.data
+    const { data: update } = await axios.get(`${headers.dir}/main.php?action=update`)
     if (!is.object(update)) throw new Error('invalid response')
     if (!is.in(update, 'timestamp', 'number')) throw new Error('invalid response')
     if (update.timestamp != lastUpdate) {

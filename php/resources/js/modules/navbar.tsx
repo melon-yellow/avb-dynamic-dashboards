@@ -39,22 +39,29 @@ function isJSONRouteCollection(obj: unknown): obj is JSONRouteCollection {
 */
 
 // Get path to current page
-const resCurrent = await axios.get(`${headers.dir}/main.php?action=route&path=this`)
-let current: JSONRoute = resCurrent?.data
-if (!isJSONRoute(current)) throw new Error('invalid route "this"')
+const mainPHP = (params: string) => axios.get(`${headers.dir}/main.php?${params}`)
+const routePHP = (route: string) => mainPHP(`action=route&path=${route}`)
+const route = async (route: string) => (await routePHP(route))?.data
 
-// Get path to parent
-const resParent = await axios.get(`${headers.dir}/main.php?action=route&path=parent`)
-let parent: JSONRoute = resParent?.data
-if (!isJSONRoute(parent)) parent = current
-
-// Get path to group
-const resChilds = await axios.get(`${headers.dir}/main.php?action=route&path=childs`)
-let group: JSONRouteCollection = resChilds?.data
-if (!isJSONRouteCollection(group)) {
-    const resBrothers = await axios.get(`${headers.dir}/main.php?action=route&path=brothers`)
-    group = resBrothers?.data
-    if (!isJSONRouteCollection(group)) throw new Error('invalid route "group"')
+// Get Routes
+const routes = async() => {
+    // Get Path to Current
+    const current = await route('this')
+    if (!isJSONRoute(current))
+        throw new Error('invalid route "this"')
+    // Get Path to Parent
+    let parent = await route('parent')
+    if (!isJSONRoute(parent?.data)) parent = current
+    // Get Path to Group
+    let group = await route('childs')
+    if (!isJSONRouteCollection(group)) {
+        const brothers = await routePHP('brothers')
+        group = brothers
+        if (!isJSONRouteCollection(group))
+            throw new Error('invalid route "group"')
+    }
+    // Return Routes
+    return { current, parent, group }
 }
 
 /*
@@ -62,19 +69,15 @@ if (!isJSONRouteCollection(group)) {
 */
 
 // Add Title to TopNav
-const TopNav = document.getElementById('topNav')
-if (!TopNav) throw new Error('couldnt find "#topNav"')
-ReactDOM.render(
-    <a
-        id={parent?.key}
-        href={`?key=${parent?.key}`}
-        className={[
-            'navbar-brand',
-            'font-weight-bold'
-        ].join(' ')}
-    >{parent?.this}</a>,
-    TopNav
-)
+const renderTopNav = (p: { parent: JSONRoute }) =>
+    ReactDOM.render(
+        <a
+            id={p.parent.key}
+            href={`?key=${p.parent.key}`}
+            className="navbar-brand font-weight-bold"
+        >{p.parent.this}</a>,
+        document.getElementById('topNav')
+    )
 
 // Create NavBar Items
 const navBarItems: JSX.Element[] = []
@@ -95,7 +98,7 @@ ReactDOM.render(navBarItems, NavBar)
 
 // Highlight current page on navbar
 for (const item in group) {
-    if (headers.key == group[item].key) {
+    if (headers.key() == group[item].key) {
         document.getElementById(group[item].key)
             ?.classList.add('active')
     }

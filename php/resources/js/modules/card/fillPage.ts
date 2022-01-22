@@ -14,8 +14,8 @@ export default function fillPage(thislayout, i, location, ref) {
 
     if (type == "layout") {
 
-        if (thislayout.topnav.color != null) {
-            document.getElementById("topNav").style.backgroundColor = thislayout.topnav.color;
+        if (thislayout?.topnav?.color != null) {
+            topNav document.getElementById("topNav").style.backgroundColor = thislayout.topnav.color;
             document.getElementsByClassName("sb-sidenav-footer")[0].style.backgroundColor = thislayout.topnav.color;
         };
         if (thislayout.sidenav.color != null) {
