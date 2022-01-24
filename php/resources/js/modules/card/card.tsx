@@ -1,5 +1,5 @@
 
-export default function fillCard(thiscd) {
+export async function fillCard(id: string, layout: Layout) {
 
     let cardName = window.page.cards[thiscd].cardName;
     let cardId = window.page.cards[thiscd].cardId;

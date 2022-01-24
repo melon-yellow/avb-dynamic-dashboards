@@ -9,8 +9,10 @@ import ReactDOM from 'react-dom'
 import axios from 'axios'
 
 // Modules
-import fillCard from './fillCard'
-import fillPage from './fillPage'
+import { fillCard } from './card'
+import { fillPage } from './fill'
+import { getElementByIdUnsafe } from '../utils'
+
 import * as canvasDisplay from './functions/canvas-display'
 import * as chartFunctions from './functions/chart-functions'
 import * as dropdownLegend from './functions/dropdown-legend'
@@ -19,40 +21,41 @@ import * as resizeFonts from './functions/resize-fonts'
 // Types
 import {
     DatasetCollection,
-    DynamicLayout
+    Children,
+    Root
 } from './types'
 
 /*
 ##########################################################################################################################
 */
 
-const datasets: DatasetCollection = {}
-const layout: DynamicLayout = {}
+let layout: Root
+let datasets: DatasetCollection
 
 /*
 ##########################################################################################################################
 */
 
-const checkLayout = (
-    current: DynamicLayout,
-    newLayout: DynamicLayout
-) => (JSON.stringify(current) !== JSON.stringify(newLayout))
+function checkLayout(current: Root, next: Root) {
+    return JSON.stringify(current) !== JSON.stringify(next)
+}
 
 /*
 ##########################################################################################################################
 */
 
-const writeLayout = (
-    layout: DynamicLayout,
-    element: Element
-) => {
+async function iterLayout<U extends string>(
+    layout?: Children,
+    ups?: U
+) {
+    if (!layout) throw new Error('invalid layout')
     for (let i = 0; i < layout.length; i++) {
-        let rtrn = await fillPage(thislayout[i], i, location, ref);
+        let rtrn = await fillPage(layout[i], i, location, ref);
         let nextlayout = thislayout[i].content;
         let nextlocation = document.getElementById(rtrn.id);
         if (nextlayout != null) {
             //calls itself
-            let rec = await writeLayout(nextlayout, nextlocation, rtrn.ref);
+            let rec = await iterLayout(nextlayout, nextlocation, rtrn.ref);
         };
     };
 }
@@ -61,16 +64,8 @@ const writeLayout = (
 ##########################################################################################################################
 */
 
-const fill = () => {
-    // Get Page Title
-    const containerTitle = document.getElementById('containerTitle')?.innerText
-
-    // Get Page Container
-    const PageContainer = document.getElementById('pageContainer')
-    if (!PageContainer) throw new Error('something went wrong')
-
-    // Add Title to Page Container
-    ReactDOM.render(
+function fill() {
+    return ReactDOM.render(
         <div
             id="containerTitle"
             className={[
@@ -79,12 +74,15 @@ const fill = () => {
                 'font-weight-bold',
                 'text-dark'
             ].join(' ')}
-        >{containerTitle}</div>,
-        PageContainer
+        >{
+            getElementByIdUnsafe('containerTitle').innerText
+        }</div>,
+        getElementByIdUnsafe('pageContainer')
     )
+}
 
-    // Run Fill Page Function
-    return writeLayout(layout, PageContainer)
+function write() {
+    return iterLayout(layout?.body?.children, 'dyn')
 }
 
 /*

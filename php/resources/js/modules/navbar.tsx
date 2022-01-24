@@ -9,7 +9,7 @@ import axios from 'axios'
 import { is } from 'ts-misc/dist/utils/guards'
 
 // Modules
-import { headers } from '../app'
+import { getElementByIdUnsafe } from './utils'
 
 /*
 ##########################################################################################################################
@@ -39,27 +39,43 @@ function isJSONRouteCollection(obj: unknown): obj is JSONRouteCollection {
 */
 
 // Get path to current page
-const mainPHP = (params: string) => axios.get(`${headers.dir}/main.php?${params}`)
-const routePHP = (route: string) => mainPHP(`action=route&path=${route}`)
-const route = async (route: string) => (await routePHP(route))?.data
+function mainPHP(params: string) {
+    return axios.get(`${
+        getElementByIdUnsafe('dir').getAttribute('content')
+    }/main.php?${params}`)
+}
+function routePHP(route: string) { return mainPHP(`action=route&path=${route}`) }
+async function getRoute(route: string) { return (await routePHP(route))?.data }
+
+async function getParentRoute() {
+    // Get Path to Current and Parent
+    const [current, par] = await Promise.all([
+        getRoute('this'), getRoute('parent')
+    ])
+    if (!isJSONRoute(current)) throw new Error('invalid route "this"')
+    const parent = isJSONRoute(par) ? par : current
+    // Return Data
+    return { current, parent }
+}
+
+async function getGroupRoute() {
+    // Get Path to Group
+    let [childs, brothers] = await Promise.all([
+        getRoute('childs'), getRoute('brothers')
+    ])
+    const group = isJSONRouteCollection(childs) 
+        ? childs : isJSONRouteCollection(brothers)
+            ? brothers : null
+    if (!group) throw new Error('invalid route "group"')
+    // Return Data
+    return { group }
+}
 
 // Get Routes
-const routes = async() => {
+async function getRoutes() {
     // Get Path to Current
-    const current = await route('this')
-    if (!isJSONRoute(current))
-        throw new Error('invalid route "this"')
-    // Get Path to Parent
-    let parent = await route('parent')
-    if (!isJSONRoute(parent?.data)) parent = current
-    // Get Path to Group
-    let group = await route('childs')
-    if (!isJSONRouteCollection(group)) {
-        const brothers = await routePHP('brothers')
-        group = brothers
-        if (!isJSONRouteCollection(group))
-            throw new Error('invalid route "group"')
-    }
+    const [{ current, parent }, { group }] =
+        await Promise.all([getParentRoute(), getGroupRoute()])
     // Return Routes
     return { current, parent, group }
 }
@@ -68,63 +84,88 @@ const routes = async() => {
 ##########################################################################################################################
 */
 
-// Add Title to TopNav
-const renderTopNav = (p: { parent: JSONRoute }) =>
+// Create NavBar Items
+function getNavBarItems(group: JSONRouteCollection) {
+    return Object.keys(group).map(i =>
+        <a
+            id={group[i].key}
+            href={`?key=${group[i].key}`}
+            className="nav-link"
+        >{group[i].this}</a>
+    )
+}
+
+// Highlight current page on navbar
+async function highlightCurrentPage(group: JSONRouteCollection) {
+    const key = getElementByIdUnsafe('key').getAttribute('content')
+    if (!is.string(key)) throw new Error('"#key" content invalid')
+    Object.keys(group).map(i =>
+        (key == group[i].key) ?
+            getElementByIdUnsafe(group[i].key)
+                .classList.add('active')
+        : null
+    )
+}
+
+// Set minimum size of page as navSize + 100
+async function setContainerMinSize() {
+    getElementByIdUnsafe('pageContainer').style.minHeight = `${
+        getElementByIdUnsafe('navBar').offsetHeight + 100
+    }px`
+}
+
+// Add Items to NavBar
+async function renderNavBarItems(p: { group: JSONRouteCollection }) {
     ReactDOM.render(
+        getNavBarItems(p.group),
+        getElementByIdUnsafe('navBar')
+    )
+    await Promise.all([
+        highlightCurrentPage(p.group),
+        setContainerMinSize()
+    ])
+}
+
+// Add Title to TopNav
+async function renderTopNav(p: { parent: JSONRoute }) {
+    return ReactDOM.render(
         <a
             id={p.parent.key}
             href={`?key=${p.parent.key}`}
             className="navbar-brand font-weight-bold"
         >{p.parent.this}</a>,
-        document.getElementById('topNav')
-    )
-
-// Create NavBar Items
-const navBarItems: JSX.Element[] = []
-for (const item in group) {
-    navBarItems.push(
-        <a
-            id={group[item]?.key}
-            href={`?key=${group[item]?.key}`}
-            className="nav-link"
-        >{group[item]?.this}</a>
+        getElementByIdUnsafe('topNav')
     )
 }
-
-// Add Items to NavBar
-const NavBar = document.getElementById('navBar')
-if (!NavBar) throw new Error('couldnt find "#navBar"')
-ReactDOM.render(navBarItems, NavBar)
-
-// Highlight current page on navbar
-for (const item in group) {
-    if (headers.key() == group[item].key) {
-        document.getElementById(group[item].key)
-            ?.classList.add('active')
-    }
-}
-
-// Get Page Container
-const PageContainer = document.getElementById('pageContainer')
-if (!PageContainer) throw new Error('couldnt find "#pageContainer"')
 
 // Add Title to Page Container
-ReactDOM.render(
-    <div
-        id="containerTitle"
-        className={[
-            'container-title',
-            'align-items-center',
-            'font-weight-bold',
-            'text-dark'
-        ].join(' ')}
-    >{current?.this}</div>,
-    PageContainer
-)
+async function renderContainer(p: { current: JSONRoute }) {
+    return ReactDOM.render(
+        <div
+            id="containerTitle"
+            className={[
+                'container-title',
+                'align-items-center',
+                'font-weight-bold',
+                'text-dark'
+            ].join(' ')}
+        >{p.current.this}</div>,
+        getElementByIdUnsafe('pageContainer')
+    )
+}
 
-// Set minimum size of page as navSize + 100
-const navSize = Number(NavBar?.offsetHeight)
-PageContainer.style.minHeight = `${navSize + 100}px`
+/*
+##########################################################################################################################
+*/
+
+export async function renderNavBar() {
+    const routes = await getRoutes()
+    return await Promise.all([
+        renderTopNav(routes),
+        renderNavBarItems(routes),
+        renderContainer(routes)
+    ])
+}
 
 /*
 ##########################################################################################################################

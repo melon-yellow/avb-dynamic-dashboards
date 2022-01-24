@@ -8,8 +8,8 @@ import axios from 'axios'
 import { is } from 'ts-misc/dist/utils/guards'
 
 // Modules
-import { headers } from '../app' 
 import * as view from './card/view'
+import { getElementByIdUnsafe } from './utils'
 
 /*
 ##########################################################################################################################
@@ -22,38 +22,63 @@ export let lastUpdate: number
 ##########################################################################################################################
 */
 
+// Get Layout Directory
+function getDir() { 
+    const dir = getElementByIdUnsafe('dir').getAttribute('content')
+    if (!dir) throw new Error('"#dir" content invalid')
+    return dir
+}
+
 // No Cache Bypass
-const layout = (nc: unknown) => `${headers.dir}/layout.json?nocache=${nc}`
-
-
-// Cyclic Update Request
-const update = async() => {
-    // First Run
-    if (lastUpdate === undefined) {
-        const { data: stale } = await axios.get(layout(new Date().getTime()))
-        view.render(stale)
-    }
-
-    // Request Update
-    const { data: update } = await axios.get(`${headers.dir}/main.php?action=update`)
-    if (!is.object(update)) throw new Error('invalid response')
-    if (!is.in(update, 'timestamp', 'number')) throw new Error('invalid response')
-    if (update.timestamp != lastUpdate) {
-        const hot = await axios.get(layout(new Date().getTime()))
-        view.render(hot?.data)
-        lastUpdate = update.timestamp
-    }
+function getLayoutPath() {
+    return `${getDir()}/layout.json?nocache=${new Date().getTime()}`
 }
 
 /*
 ##########################################################################################################################
 */
 
-// First Run
-setTimeout(update, 0)
+// Get Last Update Timestamp
+async function callUpdate() {
+    const { data: update } = await axios.get(`${getDir()}/main.php?action=update`)
+    if (!is.in(update, 'timestamp', 'number')) throw new Error('invalid response')
+    return update.timestamp
+}
 
-// Cyclic Run (each second)
-setInterval(update, 1000)
+// Sigle Update Request
+async function renderLayout() {
+    const { data } = await axios.get(getLayoutPath())
+    return view.render(data)
+}
+
+async function getStale() {
+    return await Promise.all([
+        renderLayout(),
+        callUpdate()
+    ])
+}
+
+// Cyclic Update Request
+async function getUpdate() {
+    const timestamp = await callUpdate()
+    if (lastUpdate != timestamp) {
+        lastUpdate = timestamp
+        renderLayout()
+    }
+    return timestamp
+}
+
+/*
+##########################################################################################################################
+*/
+
+// Start Dynamic Render Loop
+export async function dynamicDashboard() {
+    return await Promise.all([
+        getStale(),
+        setInterval(getUpdate, 1000)
+    ])
+}
 
 /*
 ##########################################################################################################################

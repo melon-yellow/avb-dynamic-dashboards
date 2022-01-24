@@ -1,19 +1,17 @@
 
 // Modules
-import * as navbar from './modules/navbar.js'
-import * as events from './modules/events.js'
-import * as dynamic from './modules/dynamic.js'
+import { renderNavBar } from './modules/navbar.js'
+import { setEvents } from './modules/events.js'
+import { dynamicDashboard } from './modules/dynamic.js'
 
-// Headers
-export const headers = {
-    url() { return document.getElementById("url")?.getAttribute("href") },
-    dir() { return document.getElementById("dir")?.getAttribute("content") },
-    key() { return document.getElementById("key")?.getAttribute("content") }
-} as const
+// Main Function
+async function main() {
+    return await Promise.all([
+        renderNavBar(),
+        setEvents(),
+        dynamicDashboard()
+    ])
+}
 
-// Page
-export const page = {
-    navbar,
-    events,
-    dynamic
-} as const
+// Start
+setTimeout(main, 0)
