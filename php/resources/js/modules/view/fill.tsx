@@ -7,70 +7,19 @@ import ReactDOM from 'react-dom'
 import str from 'ts-misc/dist/utils/string'
 import { getElementByIdUnsafe } from '../utils'
 import { fillCard } from './card'
-import type { Layout, Root, Children, Row, Col, Card } from './types'
+import type { Layout, Children, Row, Col, Card } from './types'
 
 /*
 ##########################################################################################################################
 */
 
-async function fillTopNavColor(color?: string) {
-    if (color) {
-        getElementByIdUnsafe("topNav").style.backgroundColor = color
-        const el = document.getElementsByClassName("sb-sidenav-footer")[0] as HTMLElement
-        el.style.backgroundColor = color
-    }
-}
-async function fillSideNavColor(color?: string) {
-    if (color) {
-        getElementByIdUnsafe("navBar").style.color = color
-        const el = document.getElementsByClassName("sb-sidenav-menu")[0] as HTMLElement
-        el.style.backgroundColor = color
-        
-    }
-}
-async function setSideNavDisplay(display?: boolean) {
-    const els = document.getElementsByClassName("sb-sidenav-toggled")
-    if (display != (els.length > 0)) {
-        getElementByIdUnsafe("body").classList.toggle("sb-sidenav-toggled")
-    }
-}
-async function fillBodyColor(color?: string) {
-    if (color) {
-        const el = document.getElementsByTagName("body")[0]
-        el.style.backgroundColor = color
-    }
-}
-async function fillBodyFontColor(color?: string) {
-    if (color) {
-        getElementByIdUnsafe("containerTitle").style.color = color
-    }
-}
-async function setBodyFontSize(size?: number) {
-    if (size) {
-        getElementByIdUnsafe("containerTitle").style.fontSize = `${size}vmax`;
-    }
-}
+type RenderSpawn = void | Promise<RenderSpawn[]>
 
 /*
 ##########################################################################################################################
 */
 
-async function fillRoot(layout: Root) {
-    return await Promise.all([
-        fillTopNavColor(layout?.topnav?.color),
-        fillSideNavColor(layout?.sidenav?.color),
-        setSideNavDisplay(layout?.sidenav?.display),
-        fillBodyColor(layout?.body?.color),
-        fillBodyFontColor(layout?.body?.font?.color),
-        setBodyFontSize(layout?.body?.font?.size)
-    ])
-}
-
-/*
-##########################################################################################################################
-*/
-
-function fillRow<
+function drawRow<
     U extends string,
     I extends number,
     L extends Row
@@ -78,7 +27,7 @@ function fillRow<
     ups: U,
     index: I,
     layout: L
-) {
+): RenderSpawn {
     // set id
     const id = str.join([ups, '-row', index])
     ReactDOM.render(
@@ -87,21 +36,21 @@ function fillRow<
     )
     // run iteration
     if (layout?.children)
-        iterLayout(id, layout.children)
+        return iterLayout(id, layout.children)
 }
 
 /*
 ##########################################################################################################################
 */
 
-function fillCol<
+function drawCol<
     I extends number,
     U extends string
 >(
     ups: U,
     index: I,
     layout: Col
-) {
+): RenderSpawn {
     // set id
     const id = str.join([ups, '-col', index])
     const className = str.join(['col-xl-', layout.grid, ' col-md-', layout.grid]) 
@@ -111,14 +60,14 @@ function fillCol<
     )
     // run iteration
     if (layout?.children)
-        iterLayout(id, layout.children)
+        return iterLayout(id, layout.children)
 }
 
 /*
 ##########################################################################################################################
 */
 
-function fillCard<
+function drawCard<
     I extends number,
     U extends string
 >(
@@ -136,9 +85,8 @@ function fillCard<
         />,
         getElementByIdUnsafe(ups)
     )
-    // run iteration
-    if (layout?.elements)
-        iterElements(id, layout.elements)
+    // run fill card
+    return fillCard(id)
 }
 
 /*
@@ -146,7 +94,7 @@ function fillCard<
 */
 
 // Fill Page Function
-function fillLayout<
+function drawLayout<
     L extends Layout,
     I extends number,
     U extends string
@@ -155,9 +103,9 @@ function fillLayout<
     index: I,
     layout: L
 ) {
-    if (layout.type === 'row') return fillRow(ups, index, layout)
-    if (layout.type === 'col') return fillCol(ups, index, layout)
-    if (layout.type === 'card') return fillCard(ups, index, layout)
+    if (layout.type === 'row') return drawRow(ups, index, layout)
+    if (layout.type === 'col') return drawCol(ups, index, layout)
+    if (layout.type === 'card') return drawCard(ups, index, layout)
     throw new Error(`invalid children type: ${layout?.type}`)
 }
 
@@ -167,10 +115,11 @@ function fillLayout<
 
 export async function iterLayout<U extends string>(
     ups: U,
-    layout: Children
+    layouts?: Children
 ) {
-    return layout.map((child, index) => {
-        return fillLayout(ups, index, child)
+    if (!layouts) throw new Error(`invalid layouts: ${ups}`)
+    return layouts.map((child, index) => {
+        return drawLayout(ups, index, child)
     })
 }
 

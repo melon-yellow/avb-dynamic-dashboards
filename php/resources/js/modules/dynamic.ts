@@ -8,7 +8,7 @@ import axios from 'axios'
 import { is } from 'ts-misc/dist/utils/guards'
 
 // Modules
-import * as view from './card/view'
+import { render } from './view'
 import { getElementByIdUnsafe } from './utils'
 
 /*
@@ -46,26 +46,37 @@ async function callUpdate() {
 }
 
 // Sigle Update Request
-async function renderLayout() {
+async function fetchLayout() {
     const { data } = await axios.get(getLayoutPath())
-    return view.render(data)
+    return await render(data)
 }
 
+// Update Only On Change
+async function checkUpdate(current: number, next: number) {
+    if (current === next) return []
+    current = next
+    return await fetchLayout()
+}
+
+/*
+##########################################################################################################################
+*/
+
+// Get Stale Data First
 async function getStale() {
     return await Promise.all([
-        renderLayout(),
-        callUpdate()
+        callUpdate(),
+        fetchLayout()
     ])
 }
 
 // Cyclic Update Request
 async function getUpdate() {
     const timestamp = await callUpdate()
-    if (lastUpdate != timestamp) {
-        lastUpdate = timestamp
-        renderLayout()
-    }
-    return timestamp
+    return await Promise.all([
+        timestamp,
+        checkUpdate(lastUpdate, timestamp)
+    ])
 }
 
 /*
