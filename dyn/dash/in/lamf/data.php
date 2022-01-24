@@ -93,7 +93,7 @@ function _parse_data() {
 	    $item["mes2"] = round($item["mes2"]/((($mes2_prod)?$mes2_prod:1)),1);
 	    $item["mes3"] = round($item["mes3"]/((($mes3_prod)?$mes3_prod:1)),1);
 		
-            $item["meta"] = 161.0;
+            #$item["meta"] = 161.0;
             $ritmo_dia = (($item["dia"] / $sec) * 86400);
             $acc_prod_custo = $mes1_prod + $mes2_prod + $mes3_prod  ;
             $ritmo_trim = ($ritmo_trim/$acc_prod_custo);
