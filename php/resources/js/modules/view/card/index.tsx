@@ -89,7 +89,7 @@ export async function fillCard<
     if (!document.getElementById(`${id}-name`))
         renderCard(id, layout)
 
-    const thissel = {
+    const thissel: Record<ElementType, number> = {
         table: 0,
         chart: 0,
         pie: 0,
@@ -98,14 +98,14 @@ export async function fillCard<
     }
 
     // for each element
-    for (let i = 0; i < layout.elements.length; i++) {
+    layout?.elements.map(() (let i = 0; i < layout.elements.length; i++) {
         //get this element type
         const type = layout.elements[i].type
         //Import Element Modules
         let thiscn = thissel[type]
         elements[thisElement].addons.typechart = new Array()
         //Run Element Function
-        let sa = await render[elementType](thiscd, thisElement, thiscn)
+        let sa = await render[elementType](`${id}-body`, element, cnt)
         thissel[type] ++
     };
 }

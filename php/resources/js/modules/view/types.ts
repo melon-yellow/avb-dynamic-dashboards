@@ -3,6 +3,8 @@
 ##########################################################################################################################
 */
 
+import React from "react"
+
 export type DatasetType = 'display' | 'table' | 'chart' | 'pie'
 
 export type Dataset<
@@ -31,28 +33,9 @@ export type Sidenav = {
     display?: boolean 
 }
 
-export type Children = (Row | Col | Card)[]
-export type Grid = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-
-export type Row = {
-    type: 'row'
-    grid?: Grid
-    children?: Children
-}
-
-export type Col = {
-    type: 'col'
-    grid: Grid
-    children?: Children
-}
-
-export type Card = {
-    type: 'card'
-    body?: {
-        color?: string
-    }
-    elements?: unknown
-}
+/*
+##########################################################################################################################
+*/
 
 export type Body = {
     color?: string
@@ -68,6 +51,53 @@ export type Root = {
 }
 
 export type Layout = Root | Row | Col | Card 
+
+/*
+##########################################################################################################################
+*/
+
+export type Grid = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
+
+export type ChildrenTypes = 'col' | 'row' | 'card'
+
+export type ChildrenLike = {
+    type: ChildrenTypes
+}
+
+export interface Row extends ChildrenLike {
+    type: 'row'
+    grid?: Grid
+    children?: Children
+}
+
+export interface Col extends ChildrenLike {
+    type: 'col'
+    grid: Grid
+    children?: Children
+}
+
+export interface Card extends ChildrenLike {
+    type: 'card'
+    name: string
+    header?: {
+        color?: string
+        font?: Font
+        css?: React.CSSProperties
+    }
+    body?: {
+        color?: string
+        css?: React.CSSProperties
+    }
+    elements?: unknown
+}
+
+export type Children = (Row | Col | Card)[]
+
+/*
+##########################################################################################################################
+*/
+
+export type ElementTypes = 'display' | 'table' | 'chart' | 'pie' | 'progress'
 
 /*
 ##########################################################################################################################
