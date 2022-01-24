@@ -4,13 +4,10 @@
 */
 
 // Imports
-import React from 'react'
-import ReactDOM from 'react-dom'
 import axios from 'axios'
 
 // Modules
-import { fillCard } from './card'
-import { iterLayout } from './fill'
+import { iterLayout } from './draw'
 import { fillRoot } from './root'
 import { getElementByIdUnsafe } from '../utils'
 
@@ -20,10 +17,7 @@ import * as dropdownLegend from './card/functions/dropdown-legend'
 import * as resizeFonts from './card/functions/resize-fonts'
 
 // Types
-import {
-    DatasetCollection,
-    Root
-} from './types'
+import { DatasetCollection, Root } from './types'
 
 /*
 ##########################################################################################################################
@@ -37,8 +31,21 @@ let datasets: DatasetCollection
 ##########################################################################################################################
 */
 
+async function Void() {}
+
+/*
+##########################################################################################################################
+*/
+
+function getHref() { return getElementByIdUnsafe('url').getAttribute('href') }
+function dataUrl() { return `${getHref()}api/data/` }
+
+/*
+##########################################################################################################################
+*/
+
 async function checkLayout(current: Root, next: Root) {
-    if (JSON.stringify(current) === JSON.stringify(next)) return
+    if (JSON.stringify(current) === JSON.stringify(next)) return Void()
     return await Promise.all([
         fillRoot(layout),
         iterLayout('dyn', layout?.body?.children)
@@ -50,13 +57,12 @@ async function checkLayout(current: Root, next: Root) {
 */
 
 async function getApiData(list: string[], current: DatasetCollection) {
-    const next = await axios.get('')
-    if (JSON.stringify(current) === JSON.stringify(next)) return
-    return await Promise.all(
-        list.map(
-            axios.get
-        )
+    // Get Datasets
+    const { data: next } = await axios.post(
+        dataUrl(), { datasets: list }
     )
+    // Check Datasets
+    if (JSON.stringify(current) === JSON.stringify(next)) return
 }
 
 /*

@@ -13,7 +13,7 @@ import type { Layout, Children, Row, Col, Card } from './types'
 ##########################################################################################################################
 */
 
-type RenderSpawn = void | Promise<RenderSpawn[]>
+type RenderSpawn = void | Promise<void> | Promise<RenderSpawn[]>
 
 /*
 ##########################################################################################################################
@@ -86,7 +86,7 @@ function drawCard<
         getElementByIdUnsafe(ups)
     )
     // run fill card
-    return fillCard(id)
+    return fillCard(id, layout)
 }
 
 /*
