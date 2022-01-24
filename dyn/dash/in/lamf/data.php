@@ -86,7 +86,8 @@ function _parse_data() {
         }
         if($ind == "Custo R$/Ton"){
             $item["dia"] = round(($item["dia"]/$today_prod),1);
-            $item["mes1"] = round($item["mes1"]/($mes1_prod || 1),1);
+            #$item["mes1"] = round($item["mes1"]/($mes1_prod || 1),1);
+	    $item["mes1"] = round($item["mes1"]/((($mes1_prod)?$mes1_prod:1)),1);
             $item["mes2"] = round($item["mes2"]/($mes2_prod || 1),1);
             $item["mes3"] = round($item["mes3"]/($mes3_prod || 1),1);
             #$item["trim"] = 100.0;
