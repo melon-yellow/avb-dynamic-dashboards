@@ -2,7 +2,9 @@
 
 function _parse_data() {
 
-    $js = get_json(getenv('AVB_APP_TREFILA_PRODUTIVIDADE'));
+    $ok_prodt = get_json(getenv('AVB_APP_TREFILA_PRODUTIVIDADE'));
+    if (!$ok_prodt['ok']) { return -1; };
+    $js = $ok_prodt['data'];
 
     if(count($js) == 0){ return -1; };
 

@@ -2,7 +2,9 @@
 
 function _parse_data() {
 
-    $json_dec = get_json(getenv('AVB_APP_LAMINADOR_FORNO'));
+    $ok_forno = get_json(getenv('AVB_APP_LAMINADOR_FORNO'));
+    if (!$ok_forno['ok']) { return -1; };
+    $json_dec = $ok_forno['data'];
 
     if(count($json_dec) == 0) { return -1; };
 

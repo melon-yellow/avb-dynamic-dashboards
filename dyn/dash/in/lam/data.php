@@ -2,8 +2,12 @@
 
 function _parse_data() {
 
-    $metas = get_json(getenv('AVB_APP_LAMINADOR_METAS'));
+    // Get Metas
+    $ok_metas = get_json(getenv('AVB_APP_LAMINADOR_METAS'));
+    if (!$ok_metas['ok']) { return -1; };
+    $metas = $ok_metas['data'];
 
+    // Calc Metas
     if(count($metas) == 0){ return -1; };
 
     $sec = (time() - strtotime("today"));
@@ -128,7 +132,11 @@ function _parse_data() {
     if($prod_data == null || $dat_file == null || timestamp($timestamp) >= timestamp($dat_file) + 3600){
         $dat = $timestamp;
         put_json("dat.json",$dat);
-        $prod = get_json(getenv('AVB_APP_LAMINADOR_PRODUCAO'));
+        // Get Prod
+        $ok_prod = get_json(getenv('AVB_APP_LAMINADOR_PRODUCAO'));
+        if (!$ok_prod['ok']) { return -1; };
+        $prod = $ok_prod['data'];
+        // Calc Prod
         $prod_data = array();
         for ($i = 0; $i < count($prod); $i++) {
             $dia = explode("/", $prod[$i]["data"])[0];
